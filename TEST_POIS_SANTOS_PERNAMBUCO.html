@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste de POIs - Santos a Pernambuco</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        background: #38bdf8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #0ea5e9;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        max-height: 600px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+      }
+      .success {
+        color: #10b981;
+      }
+      .error {
+        color: #ef4444;
+      }
+      .info {
+        color: #3b82f6;
+      }
+      .loading {
+        color: #f59e0b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🧪 Teste de POIs - Rota Santos → Pernambuco</h1>
+      <p>
+        Este teste verifica se todos os POIs estão sendo retornados (não apenas
+        os primeiros 30).
+      </p>
+
+      <button onclick="testarRotaSantosRecife()">
+        ▶️ Teste 1: Santos → Recife
+      </button>
+      <button onclick="testarRotaSantosFortaleza()">
+        ▶️ Teste 2: Santos → Fortaleza
+      </button>
+      <button onclick="testarRotaSantosJoaoPessoa()">
+        ▶️ Teste 3: Santos → João Pessoa
+      </button>
+      <button onclick="limparOutput()">🧹 Limpar</button>
+
+      <div id="output"></div>
+    </div>
+
+    <script>
+      const BACKEND_URL = "http://localhost:8080/api";
+      const output = document.getElementById("output");
+
+      function log(msg, type = "info") {
+        const timestamp = new Date().toLocaleTimeString();
+        const className =
+          type === "success"
+            ? "success"
+            : type === "error"
+              ? "error"
+              : type === "loading"
+                ? "loading"
+                : "info";
+        const prefix = {
+          success: "✅",
+          error: "❌",
+          loading: "⏳",
+          info: "ℹ️",
+        }[type];
+
+        output.innerHTML += `<span class="${className}">[${timestamp}] ${prefix} ${msg}</span>\n`;
+        output.scrollTop = output.scrollHeight;
+      }
+
+      function limparOutput() {
+        output.innerHTML = "";
+      }
+
+      async function testarRota(nome1, lat1, lon1, nome2, lat2, lon2) {
+        limparOutput();
+        log(`Iniciando teste: ${nome1} → ${nome2}`, "info");
+
+        try {
+          // Primeiro, calcular a rota
+          log(
+            `Calculando rota entre ${nome1} (${lat1}, ${lon1}) e ${nome2} (${lat2}, ${lon2})...`,
+            "loading",
+          );
+
+          const routeResponse = await axios.post(
+            `${BACKEND_URL}/calculate-route`,
+            {
+              origem: { latitude: lat1, longitude: lon1 },
+              destino: { latitude: lat2, longitude: lon2 },
+              vehicleInfo: {
+                height: 3.5,
+                weight: 20,
+                length: 18,
+                axleCount: 3,
+                width: 2.6,
+              },
+            },
+            {
+              timeout: 120000,
+              headers: {
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true",
+              },
+            },
+          );
+
+          log(`Rota calculada com sucesso!`, "success");
+
+          if (
+            routeResponse.data.graphhopper &&
+            routeResponse.data.graphhopper.paths
+          ) {
+            const path = routeResponse.data.graphhopper.paths[0];
+            log(
+              `Distância: ${(path.distance / 1000).toFixed(1)} km | Tempo: ${Math.round(path.time / 1000 / 60)} minutos`,
+              "info",
+            );
+
+            // Agora buscar POIs
+            log(
+              `Buscando POIs ao longo da rota (isso pode levar alguns minutos)...`,
+              "loading",
+            );
+
+            const poisResponse = await axios.post(
+              `${BACKEND_URL}/pois-for-route`,
+              {
+                polyline: path.points,
+                radius: 50,
+              },
+              {
+                timeout: 300000,
+                headers: {
+                  "Content-Type": "application/json",
+                  "ngrok-skip-browser-warning": "true",
+                },
+              },
+            );
+
+            const pois = poisResponse.data.pois || [];
+            log(`Total de POIs encontrados: ${pois.length}`, "success");
+
+            if (pois.length === 0) {
+              log(`⚠️ Nenhum POI foi encontrado na rota!`, "error");
+            } else if (pois.length === 30) {
+              log(
+                `⚠️ Exatamente 30 POIs encontrados - pode estar limitado!`,
+                "error",
+              );
+            } else if (pois.length > 30) {
+              log(
+                `✅ Mais de 30 POIs encontrados! (${pois.length} no total)`,
+                "success",
+              );
+            }
+
+            // Listar alguns POIs como exemplo
+            log(`\n--- Primeiros 10 POIs encontrados ---`, "info");
+            pois.slice(0, 10).forEach((poi, idx) => {
+              const lat = poi.lat || poi.center?.lat;
+              const lon = poi.lon || poi.center?.lon;
+              const name = poi.tags?.name || "POI sem nome";
+              log(
+                `${idx + 1}. ${name} (${lat?.toFixed(4)}, ${lon?.toFixed(4)})`,
+                "info",
+              );
+            });
+
+            if (pois.length > 10) {
+              log(`... e mais ${pois.length - 10} POIs`, "info");
+            }
+          } else {
+            log(`Nenhuma rota foi calculada pelo servidor`, "error");
+          }
+        } catch (error) {
+          log(`Erro: ${error.message}`, "error");
+          if (error.response?.data) {
+            log(`Detalhes: ${JSON.stringify(error.response.data)}`, "error");
+          }
+        }
+      }
+
+      function testarRotaSantosRecife() {
+        // Santos, SP: -23.9645, -46.3331
+        // Recife, PE: -8.0726, -34.8759
+        testarRota("Santos", -23.9645, -46.3331, "Recife", -8.0726, -34.8759);
+      }
+
+      function testarRotaSantosFortaleza() {
+        // Santos, SP: -23.9645, -46.3331
+        // Fortaleza, CE: -3.7319, -38.5267
+        testarRota(
+          "Santos",
+          -23.9645,
+          -46.3331,
+          "Fortaleza",
+          -3.7319,
+          -38.5267,
+        );
+      }
+
+      function testarRotaSantosJoaoPessoa() {
+        // Santos, SP: -23.9645, -46.3331
+        // João Pessoa, PB: -7.1193, -34.8449
+        testarRota(
+          "Santos",
+          -23.9645,
+          -46.3331,
+          "João Pessoa",
+          -7.1193,
+          -34.8449,
+        );
+      }
+
+      // Log inicial
+      log(`Teste de POIs Iniciado - Backend: ${BACKEND_URL}`, "info");
+    </script>
+  </body>
+</html>

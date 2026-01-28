@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste Menu Hambúrguer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+      }
+
+      .header {
+        background: rgba(30, 41, 59, 0.75);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        height: 70px;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .menu-toggle {
+        display: none;
+        background: #38bdf8;
+        color: #0f172a;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        z-index: 3000;
+        transition: all 0.3s;
+      }
+
+      .menu-toggle:hover {
+        background: #0284c7;
+      }
+
+      .menu-toggle.active {
+        background: #00b36e;
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+      }
+
+      .main-content {
+        display: flex;
+        height: calc(100vh - 70px);
+      }
+
+      .sidebar {
+        width: 300px;
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        overflow-y: auto;
+        border-radius: 24px;
+        margin: 16px;
+      }
+
+      .center {
+        flex: 1;
+        background: #1e293b;
+        margin: 16px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+      }
+
+      .menu-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1500;
+        top: 70px;
+      }
+
+      .menu-backdrop.active {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          flex-direction: column;
+          height: auto;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 70px;
+          left: -100%;
+          width: 85%;
+          height: calc(100vh - 70px);
+          z-index: 2000;
+          margin: 0;
+          border-radius: 0 20px 20px 0;
+          transition: left 0.4s ease;
+        }
+
+        .sidebar.active {
+          left: 0;
+        }
+
+        .center {
+          position: relative;
+          z-index: 1;
+          margin: 0;
+          min-height: 50vh;
+          border-radius: 0;
+        }
+      }
+
+      .sidebar h2 {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        color: #94a3b8;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(15, 23, 42, 0.8);
+        color: white;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        background: #4ade80;
+        color: #064e3b;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .btn:hover {
+        background: #22c55e;
+      }
+
+      .info-box {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .debug {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #4ade80;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        z-index: 4000;
+        max-width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">🚚 Road-Truck</div>
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+    </header>
+
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+
+    <div class="main-content">
+      <aside class="sidebar" id="config-panel">
+        <h2>📍 Calcular Rota</h2>
+        <div class="form-group">
+          <label>Origem</label>
+          <input type="text" placeholder="Ex: Porto de Santos" />
+        </div>
+        <div class="form-group">
+          <label>Destino</label>
+          <input type="text" placeholder="Ex: São Paulo" />
+        </div>
+        <div class="form-group">
+          <label>Altura (m)</label>
+          <input type="number" value="4.4" />
+        </div>
+        <div class="form-group">
+          <label>Peso (ton)</label>
+          <input type="number" value="45" />
+        </div>
+        <button class="btn">Traçar Rota</button>
+        <button class="btn" style="background: #94a3b8; color: #0f172a">
+          Limpar
+        </button>
+      </aside>
+
+      <section class="center">
+        <div class="info-box">
+          <h3>🗺️ Mapa</h3>
+          <p>O mapa apareceria aqui</p>
+          <p style="margin-top: 20px; font-size: 0.85rem">
+            Redimensione a janela ou abra em mobile
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="debug" id="debug">
+      <strong>📊 Debug:</strong>
+      <div>Tela: <span id="screen-width">-</span>px</div>
+      <div>Menu: <span id="menu-status">FECHADO</span></div>
+    </div>
+
+    <script>
+      const menuToggle = document.getElementById("menu-toggle");
+      const configPanel = document.getElementById("config-panel");
+      const backdrop = document.getElementById("menu-backdrop");
+      const screenWidth = document.getElementById("screen-width");
+      const menuStatus = document.getElementById("menu-status");
+
+      let isMenuOpen = false;
+
+      // Atualizar debug
+      function updateDebug() {
+        screenWidth.textContent = window.innerWidth;
+        menuStatus.textContent = isMenuOpen ? "✅ ABERTO" : "❌ FECHADO";
+      }
+
+      // Fechar menu
+      function closeMenu() {
+        if (!isMenuOpen) return;
+        isMenuOpen = false;
+        configPanel.classList.remove("active");
+        backdrop.classList.remove("active");
+        menuToggle.classList.remove("active");
+        document.body.style.overflow = "auto";
+        console.log("❌ Menu FECHADO");
+        updateDebug();
+      }
+
+      // Abrir menu
+      function openMenu() {
+        if (isMenuOpen) return;
+        isMenuOpen = true;
+        configPanel.classList.add("active");
+        backdrop.classList.add("active");
+        menuToggle.classList.add("active");
+        document.body.style.overflow = "hidden";
+        console.log("✅ Menu ABERTO");
+        updateDebug();
+      }
+
+      // Click no hambúrguer
+      menuToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Clique no hambúrguer");
+        if (isMenuOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Click no backdrop
+      backdrop.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Clique no backdrop");
+        closeMenu();
+      });
+
+      // Click fora do menu
+      document.addEventListener("click", (e) => {
+        if (window.innerWidth > 768) return;
+        if (!isMenuOpen) return;
+
+        const isMenuClick =
+          e.target.closest(".menu-toggle") || e.target.closest(".sidebar");
+
+        if (!isMenuClick) {
+          console.log("Clique fora do menu");
+          closeMenu();
+        }
+      });
+
+      // ESC
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && isMenuOpen) {
+          console.log("ESC pressionado");
+          closeMenu();
+        }
+      });
+
+      // Resize
+      window.addEventListener("resize", () => {
+        updateDebug();
+        if (window.innerWidth > 768 && isMenuOpen) {
+          console.log("Resize detectado em desktop");
+          closeMenu();
+        }
+      });
+
+      // Inicializar
+      updateDebug();
+      console.log("✅ Script de teste inicializado!");
+    </script>
+  </body>
+</html>

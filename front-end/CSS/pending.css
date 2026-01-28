@@ -1,0 +1,336 @@
+/* Importante: Defina o Box-Sizing para facilitar o layout */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif; /* Aplica a fonte importada */
+  background-color: #f4f7f9; /* Fundo levemente cinza/azul */
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  min-height: 100vh; /* Garante que o corpo ocupe a altura total da tela */
+  text-align: center;
+}
+
+.waiting-container {
+  background-color: #ffffff; /* Fundo branco para o conteúdo principal */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  max-width: 500px;
+  width: 90%;
+}
+
+h1 {
+  color: #333333;
+  margin-bottom: 15px;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+.message,
+.instruction {
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 1em;
+}
+
+.instruction {
+  font-style: italic;
+  color: #444444;
+}
+
+.icon-wrapper {
+  margin-bottom: 25px;
+}
+
+.wait-icon {
+  font-size: 4em; /* Tamanho grande para o ícone */
+  color: #ffa500; /* Cor laranja para o ícone de tempo */
+  display: inline-block;
+  /* Animação sutil (opcional) */
+  animation: pulse 1.5s infinite alternate;
+}
+
+/* Animação de pulsar para o ícone */
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* Estilização da Barra de Carregamento (Loading Bar) */
+.loading-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin: 30px auto;
+  overflow: hidden; /* Garante que a barra de progresso não estoure o container */
+}
+
+.progress {
+  height: 100%;
+  width: 100%; /* Inicialmente 100% para a animação */
+  background: linear-gradient(
+    90deg,
+    #4caf50,
+    #8bc34a
+  ); /* Gradiente verde/lima */
+  border-radius: 5px;
+  /* Animação de movimento contínuo */
+  animation: loading-flow 2s infinite linear;
+  transform-origin: left;
+}
+
+/* Animação do fluxo de carregamento (simula um movimento contínuo) */
+@keyframes loading-flow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.contact-info {
+  margin-top: 25px;
+  color: #777777;
+  font-size: 0.9em;
+}
+
+.contact-info strong {
+  color: #333333;
+}
+
+/* Responsividade para telas menores */
+
+/* Desktop grande: 1200px+ (padrão acima) */
+
+/* Tablets grandes / Laptops pequenos: 1024px e abaixo */
+@media (max-width: 1024px) {
+  .waiting-container {
+    max-width: 480px;
+    padding: 35px;
+  }
+
+  h1 {
+    font-size: 1.7em;
+    margin-bottom: 12px;
+  }
+
+  .message,
+  .instruction {
+    font-size: 0.95em;
+    margin-bottom: 18px;
+  }
+
+  .wait-icon {
+    font-size: 3.8em;
+    margin-bottom: 20px;
+  }
+
+  .loading-bar {
+    height: 8px;
+    margin: 25px auto;
+  }
+
+  .contact-info {
+    margin-top: 20px;
+    font-size: 0.85em;
+  }
+}
+
+/* Tablets: 768px e abaixo */
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+
+  .waiting-container {
+    max-width: 450px;
+    width: 95%;
+    padding: 30px 20px;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333333;
+  }
+
+  .message,
+  .instruction {
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+
+  .instruction {
+    font-size: 0.85em;
+  }
+
+  .icon-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .wait-icon {
+    font-size: 3.5em;
+  }
+
+  .loading-bar {
+    height: 8px;
+    margin: 20px auto;
+  }
+
+  .progress {
+    height: 100%;
+  }
+
+  .contact-info {
+    margin-top: 18px;
+    font-size: 0.8em;
+    line-height: 1.4;
+  }
+
+  .contact-info strong {
+    display: block;
+    margin-top: 5px;
+  }
+}
+
+/* Telefones grandes / Tablets pequenos: 480px e abaixo */
+@media (max-width: 480px) {
+  body {
+    padding: 15px;
+    min-height: 100vh;
+  }
+
+  .waiting-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 25px 15px;
+    margin: 0;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  h1 {
+    font-size: 1.3em;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .message,
+  .instruction {
+    font-size: 0.85em;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .instruction {
+    font-size: 0.8em;
+  }
+
+  .icon-wrapper {
+    margin-bottom: 15px;
+  }
+
+  .wait-icon {
+    font-size: 3em;
+  }
+
+  .loading-bar {
+    height: 6px;
+    margin: 15px auto;
+    border-radius: 3px;
+  }
+
+  .contact-info {
+    margin-top: 15px;
+    font-size: 0.75em;
+    line-height: 1.3;
+  }
+
+  .contact-info strong {
+    display: block;
+    margin-top: 3px;
+  }
+}
+
+/* Telefones pequenos: 360px e abaixo */
+@media (max-width: 360px) {
+  body {
+    padding: 10px;
+  }
+
+  .waiting-container {
+    padding: 20px 12px;
+    max-width: 100%;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+  }
+
+  .message,
+  .instruction {
+    font-size: 0.8em;
+    margin-bottom: 10px;
+  }
+
+  .instruction {
+    font-size: 0.75em;
+  }
+
+  .icon-wrapper {
+    margin-bottom: 12px;
+  }
+
+  .wait-icon {
+    font-size: 2.5em;
+  }
+
+  .loading-bar {
+    height: 5px;
+    margin: 12px auto;
+  }
+
+  .contact-info {
+    margin-top: 12px;
+    font-size: 0.7em;
+  }
+
+  .contact-info strong {
+    font-size: 0.75em;
+  }
+}
+
+.btn {
+  background-color: #4caf50;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1;
+  font-weight: 600;
+  margin-top: auto;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  transition: background-color 0.3s;
+}

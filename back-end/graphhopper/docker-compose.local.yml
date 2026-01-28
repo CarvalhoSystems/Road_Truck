@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  graphhopper:
+    build: .
+    image: road-truck-graphhopper:12.0
+    container_name: road_truck_graphhopper
+    # use an internal data copy and a named volume for cache/logs to avoid host bind issues
+    volumes:
+      - graphhopper_cache:/graphhopper/graph-cache
+      - graphhopper_logs:/graphhopper/logs
+    ports:
+      - "8989:8989"
+      - "8990:8990"
+    command: ["server", "/graphhopper/config.yml"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    shm_size: "1g"
+volumes:
+  graphhopper_cache: {}
+  graphhopper_logs: {}

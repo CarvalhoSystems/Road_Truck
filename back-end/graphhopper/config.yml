@@ -1,0 +1,46 @@
+graphhopper:
+  datareader.file: "data/brazil-251208.osm.pbf"
+  graph.location: graph-cache
+  graph.encoded_values: car_access,car_average_speed,road_access,surface,max_height,max_weight,hgv
+
+  profiles:
+    - name: truck
+      profile: car
+      weighting: custom
+      custom_model:
+        speed:
+          - if: "true"
+            limit_to: "car_average_speed"
+        priority:
+          - if: "max_height < 4.3"
+            multiply_by: 0
+          - if: "max_weight < 15"
+            multiply_by: 0
+
+  profiles_ch:
+    - profile: truck
+
+  profiles_lm: []
+
+  prepare.min_network_size: 200
+  prepare.subnetworks.threads: 1
+  graph.dataaccess.default_type: MMAP
+
+  routing.snap_preventions_default: "tunnel,bridge,ferry"
+  routing.non_ch.max_waypoint_distance: 10000000
+  import.osm.ignored_highways: "footway,construction,cycleway,path,steps"
+
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      bind_host: localhost
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: localhost
+
+logging:
+  appenders:
+    - type: console
+      threshold: INFO

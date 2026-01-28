@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Teste API Road-Truck</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+      }
+      button {
+        padding: 12px 20px;
+        margin: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+        max-height: 600px;
+        overflow: auto;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 Teste de API - Road-Truck</h1>
+    <div>
+      <button onclick="testHealth()">✅ Health Check</button>
+      <button onclick="testRoute()">🚗 Calcular Rota</button>
+      <button onclick="testPois()">📍 Buscar POIs</button>
+    </div>
+    <hr />
+    <pre id="result">Aguardando teste...</pre>
+
+    <script>
+      async function testHealth() {
+        try {
+          document.getElementById("result").innerHTML =
+            "Testando /api/health...";
+          const resp = await fetch("/api/health");
+          const data = await resp.json();
+          document.getElementById("result").innerHTML =
+            '<span class="success">✅ HEALTH OK</span>\n\n' +
+            JSON.stringify(data, null, 2);
+        } catch (err) {
+          document.getElementById("result").innerHTML =
+            '<span class="error">❌ Erro: ' + err.message + "</span>";
+        }
+      }
+
+      async function testRoute() {
+        try {
+          document.getElementById("result").innerHTML =
+            "Calculando rota SP → Buenos Aires...";
+          const resp = await fetch("/api/calculate-routes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              origin: "São Paulo, Brasil",
+              destination: "Buenos Aires, Argentina",
+            }),
+          });
+          const data = await resp.json();
+
+          if (data.success && data.routes && data.routes.length > 0) {
+            let msg = `<span class="success">✅ ${data.routes.length} rotas encontradas</span>\n\n`;
+            data.routes.forEach((r, i) => {
+              msg += `Rota ${i + 1}:\n`;
+              msg += `  Distância: ${r.distanceKm}km\n`;
+              msg += `  Duração: ${r.durationMinutes}min\n`;
+              msg += `  Polyline: ${r.polyline.substring(0, 60)}...\n\n`;
+            });
+            document.getElementById("result").innerHTML = msg;
+          } else {
+            document.getElementById("result").innerHTML =
+              '<span class="error">❌ Nenhuma rota</span>\n' +
+              JSON.stringify(data, null, 2);
+          }
+        } catch (err) {
+          document.getElementById("result").innerHTML =
+            '<span class="error">❌ Erro: ' + err.message + "</span>";
+        }
+      }
+
+      async function testPois() {
+        try {
+          document.getElementById("result").innerHTML = "Buscando POIs...";
+          const resp = await fetch("/api/pois-for-route", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              polyline:
+                "ktweFnimiVt@z@nDlCbAbAd@`@b@`@l@p@n@r@rAtBn@fArAvBnAtBn@|@v@|@lAlA",
+            }),
+          });
+          const data = await resp.json();
+          document.getElementById("result").innerHTML =
+            `<span class="success">✅ ${
+              data.pois ? data.pois.length : 0
+            } POIs</span>\n\n` +
+            JSON.stringify(data, null, 2).substring(0, 800);
+        } catch (err) {
+          document.getElementById("result").innerHTML =
+            '<span class="error">❌ Erro: ' + err.message + "</span>";
+        }
+      }
+
+      window.onload = testHealth;
+    </script>
+  </body>
+</html>

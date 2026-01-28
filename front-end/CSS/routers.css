@@ -1,0 +1,951 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap");
+
+:root {
+  --primary: #4ade80;
+  --primary-hover: #22c55e;
+  --bg-dark: #0f172a;
+  --glass-bg: rgba(30, 41, 59, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #f87171;
+  --accent: #38bdf8;
+  --header-height: 70px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background: radial-gradient(circle at top right, #1e293b, #0f172a);
+  background-attachment: fixed;
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+/* ========== HEADER ========== */
+.header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 5%;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin-right: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-toggle.active {
+  background: var(--accent);
+  color: var(--bg-dark);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-grow: 1;
+  margin: 0 20px;
+}
+
+.header h1 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+
+.header h1 span {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-controls #btn-logout {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+#user-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== LAYOUT DESKTOP (>=1200px) - 3 COLUNAS ========== */
+.router-main {
+  display: grid;
+  grid-template-columns: 340px 1fr 340px;
+  gap: 16px;
+  padding: 16px;
+  height: calc(100vh - var(--header-height));
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar {
+  position: relative;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid var(--glass-border);
+  padding: 20px;
+  border-radius: 24px;
+  max-height: calc(100vh - var(--header-height) - 32px);
+  overflow-y: auto;
+  display: block;
+}
+
+#config-panel {
+  grid-column: 1;
+}
+
+#info-panel {
+  grid-column: 3;
+}
+
+.map-container {
+  grid-column: 2;
+  position: relative;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Apenas em desktop (>=1200px), o .sidebar-wrapper usa display: contents */
+@media (max-width: 1199px) {
+  .sidebar-wrapper {
+    display: block !important; /* Mobile: Exibe normalmente */
+  }
+}
+
+.sidebar {
+  position: relative;
+  background: rgba(30, 41, 59, 0.4);
+  border-right: 1px solid var(--glass-border);
+  padding: 1.5rem;
+  border-radius: 24px;
+  max-height: calc(100vh - var(--header-height) - 32px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#config-panel {
+  grid-column: 1;
+}
+
+#info-panel {
+  grid-column: 3;
+}
+
+.map-container {
+  grid-column: 2;
+  position: relative;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== LAYOUT TABLET (769px - 1199px) - 2 COLUNAS ========== */
+@media (max-width: 1199px) {
+  .router-main {
+    grid-template-columns: 280px 1fr;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - var(--header-height));
+  }
+
+  .sidebar {
+    background: rgba(30, 41, 59, 0.4);
+    max-height: calc(100vh - var(--header-height) - 24px);
+  }
+
+  #config-panel {
+    grid-column: 1;
+  }
+
+  #info-panel {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .map-container {
+    grid-column: 2;
+  }
+}
+
+/* ========== LAYOUT SMALL TABLET (769px - 900px) - 1 COLUNA ========== */
+@media (max-width: 900px) {
+  .router-main {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - var(--header-height));
+  }
+
+  .sidebar {
+    background: rgba(30, 41, 59, 0.4);
+    max-height: calc(100vh - var(--header-height) - 24px);
+  }
+
+  #config-panel {
+    grid-column: 1;
+  }
+
+  #info-panel {
+    grid-column: 1;
+    margin-top: 16px;
+  }
+
+  .map-container {
+    grid-column: 1;
+  }
+}
+
+/* ========== COMPONENTES COMUNS ========== */
+
+/* Inputs e Formulários */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(30, 41, 59, 0.8);
+}
+
+/* Botões */
+button {
+  background: var(--primary);
+  color: var(--bg-dark);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+
+button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+button.danger:hover {
+  background: #f87171;
+  filter: brightness(0.9);
+}
+
+/* Leaflet Map */
+.leaflet-container {
+  background: #1a1f35;
+  border-radius: 24px;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Descrições */
+.description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* Ícones */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+}
+
+/* ========== SEÇÕES DO FORMULÁRIO ========== */
+
+.form-section,
+.info-section,
+.poi-section,
+.support-section {
+  margin-bottom: 20px;
+}
+
+.form-section h2,
+.info-section h2,
+.poi-section h2 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* ========== FILTROS DE POIs ========== */
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.chip.active {
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-weight: 600;
+}
+
+/* ========== INFORMAÇÕES ========== */
+
+.info-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.pois-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.poi-item {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.poi-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+/* ========== SUPORTE ========== */
+
+.support-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.support-card h4 {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.support-card p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.btn-support-action {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.85rem;
+}
+
+/* ========== MAPA FULLSCREEN ========== */
+
+.map-fullscreen-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  z-index: 100;
+  background: var(--primary);
+  color: var(--bg-dark);
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+}
+
+.map-fullscreen-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+/* ========== LOADING SPINNER ========== */
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(74, 222, 128, 0.2);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== UTILITY CLASSES ========== */
+
+.w-full {
+  width: 100%;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--bg-dark);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-danger:hover {
+  background: #f87171;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-select {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  width: 100%;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.clear-route {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+}
+
+.clear-route:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ========== RESPONSIVE FINAL ========== */
+
+/* --- CONFIGURAÇÃO PARA PC (Telas Grandes) --- */
+@media (min-width: 1025px) {
+  .router-main {
+    display: grid !important;
+    grid-template-columns: 350px 1fr 350px !important; /* 3 Colunas: Form | Mapa | Detalhes */
+    height: calc(100vh - 70px);
+    width: 100vw;
+  }
+
+  /* No PC, o wrapper "se dissolve" para as asides virarem colunas do grid */
+  .sidebar-wrapper {
+    display: contents !important;
+  }
+
+  #config-panel {
+    grid-column: 1;
+    border-right: 1px solid #333;
+  }
+  .map-container {
+    grid-column: 2;
+    height: 100%;
+    position: relative;
+  }
+  #info-panel {
+    grid-column: 3;
+    border-left: 1px solid #333;
+  }
+
+  .sidebar {
+    background: #1a1d21;
+    display: flex !important; /* Sempre visível no PC */
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px;
+  }
+}
+
+/* --- CONFIGURAÇÃO PARA CELULAR (Mobile/Tablet) --- */
+@media (max-width: 1024px) {
+  .router-main {
+    display: block !important;
+    position: relative;
+    height: calc(100vh - 70px);
+  }
+
+  .sidebar-wrapper {
+    position: fixed;
+    top: 70px;
+    left: -100%; /* Escondido fora da tela */
+    width: 85%;
+    max-width: 320px;
+    height: calc(100vh - 70px);
+    background: #1a1d21;
+    z-index: 9999; /* Garante que fique ACIMA do mapa */
+    transition: left 0.3s ease-in-out;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Quando clicamos no botão hambúrguer */
+  .sidebar-wrapper.active {
+    left: 0;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    display: block !important;
+    padding: 15px;
+  }
+
+  .map-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Fica por baixo de tudo */
+  }
+
+  /* Fundo escuro quando o menu abre */
+  .menu-backdrop.active {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9998;
+  }
+}
+
+/* ========== LAYOUT MOBILE UNIFICADO (<=768px) ========== */
+/* Inclui correções para Samsung A14, iPhone 11 e estrutura Fullscreen */
+@media (max-width: 768px) {
+  /* --- HEADER & NAV --- */
+  .header {
+    padding: 0 12px;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  .brand {
+    gap: 8px;
+    margin: 0 8px;
+  }
+  .header h1 {
+    font-size: 0.95rem;
+  }
+  .header h1 span {
+    display: none;
+  }
+  #user-email {
+    display: none;
+  }
+
+  /* --- LAYOUT PRINCIPAL --- */
+  .router-main {
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    padding: 0;
+    height: calc(100vh - var(--header-height));
+    position: relative;
+    overflow: visible; /* FIX: Permite que o menu deslize sem ser cortado */
+  }
+
+  /* --- MAPA FULLSCREEN --- */
+  .map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    z-index: 1;
+    grid-column: auto;
+  }
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+  .leaflet-container {
+    border-radius: 0;
+  }
+
+  /* --- SIDEBAR (MENU LATERAL) --- */
+  .sidebar-wrapper {
+    position: fixed;
+    top: var(--header-height);
+    left: -100%; /* Escondido à esquerda */
+    width: 85%;
+    max-width: 320px;
+    height: calc(100vh - var(--header-height));
+    background: #0f172a !important; /* Cor sólida e forçada */
+    z-index: 9999 !important; /* Garante que fique acima de tudo */
+    overflow-y: auto; /* Scroll interno se a lista for longa */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    display: block !important; /* Garante visibilidade */
+  }
+
+  /* Quando o menu estiver ativo */
+  .sidebar-wrapper.active {
+    left: 0;
+  }
+  .sidebar {
+    position: static !important;
+    width: 100% !important;
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 30px; /* Espaço entre o form e os detalhes */
+  }
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* --- PAINÉIS INTERNOS --- */
+  #config-panel {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 20px;
+    grid-column: auto;
+  }
+  #info-panel {
+    display: block; /* Mantendo visível no menu lateral */
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-top: 30px;
+    grid-column: auto;
+  }
+
+  /* --- OVERLAY (Fundo escuro) --- */
+  .menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1500;
+    display: none;
+    pointer-events: none;
+  }
+  .menu-backdrop.active {
+    display: block;
+    pointer-events: auto;
+  }
+
+  /* --- TIPOGRAFIA E TÍTULOS --- */
+  .form-section h2,
+  .info-section h2,
+  .poi-section h2 {
+    font-size: 1.1rem !important;
+    margin-top: 15px !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important; /* Espaço entre ícone e texto */
+  }
+
+  /* --- INPUTS E LABELS (Touch Friendly) --- */
+  .form-group {
+    margin-bottom: 22px !important; /* Espaço entre cada campo */
+  }
+  label {
+    font-size: 1rem !important;
+    margin-bottom: 10px !important;
+    display: block;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    height: 50px !important; /* Mais fácil de clicar */
+    font-size: 16px !important; /* Impede zoom no iPhone */
+    padding: 0 15px !important;
+  }
+
+  /* --- GRIDS --- */
+  .vehicle-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* --- FILTROS DE POIs --- */
+  .filter-chips {
+    gap: 10px !important;
+    margin: 15px 0 !important;
+  }
+  .chip {
+    padding: 8px 14px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* --- INFORMAÇÕES --- */
+  .info-box {
+    font-size: 1rem !important;
+  }
+
+  /* --- POIs --- */
+  .poi-item {
+    padding: 12px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* --- SUPORTE --- */
+  .support-card {
+    padding: 16px !important;
+  }
+  .support-card h4 {
+    font-size: 1rem !important;
+  }
+  .support-card p {
+    font-size: 0.95rem !important;
+    margin-bottom: 12px !important;
+  }
+  .btn-support-action {
+    padding: 10px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* --- BOTÕES --- */
+  .mt-4 button {
+    height: 55px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    font-size: 1.1rem !important;
+    pointer-events: auto !important;
+  }
+
+  button,
+  input[type="text"],
+  input[type="number"],
+  select {
+    pointer-events: auto !important;
+  }
+
+  /* --- SCROLLBAR CUSTOMIZADO --- */
+  .sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sidebar::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+  input,
+  select,
+  button {
+    font-size: 16px !important; /* Essencial para iOS não dar zoom */
+    height: 45px;
+  }
+}
+
+/* ========== AJUSTES FINOS PARA TELAS PEQUENAS (<=480px) ========== */
+/* Deve vir APÓS o bloco de 768px para ter prioridade */
+@media (max-width: 480px) {
+  .header {
+    padding: 0 8px;
+  }
+
+  .brand {
+    gap: 6px;
+    margin: 0 6px;
+  }
+
+  .header h1 {
+    font-size: 0.9rem; /* Menor que o 0.95rem do 768px */
+  }
+
+  .logo-icon {
+    font-size: 1.2rem;
+  }
+
+  .user-controls {
+    gap: 6px;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .pois-list {
+    max-height: 200px;
+  }
+}

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Mobile - RoadTruck</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 20px;
+        margin: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      h1 {
+        color: #4ade80;
+        border-bottom: 2px solid #4ade80;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #38bdf8;
+        margin-top: 30px;
+      }
+      .section {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .info-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .label {
+        font-weight: bold;
+        color: #38bdf8;
+      }
+      .value {
+        color: #4ade80;
+        word-break: break-all;
+      }
+      .error {
+        color: #f87171;
+      }
+      .success {
+        color: #4ade80;
+      }
+      button {
+        background: #4ade80;
+        color: #0f172a;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #22c55e;
+      }
+      button.danger {
+        background: #f87171;
+      }
+      button.danger:hover {
+        background: #ef4444;
+      }
+      .result {
+        background: rgba(56, 189, 248, 0.1);
+        border-left: 4px solid #38bdf8;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 4px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+      }
+      .loader {
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top: 4px solid #38bdf8;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔧 Debug Mobile - RoadTruck</h1>
+      <p>Esta página ajuda a diagnosticar problemas de conexão no celular.</p>
+
+      <div class="section">
+        <h2>📱 Informações do Dispositivo</h2>
+        <div class="info-line">
+          <span class="label">URL Frontend:</span>
+          <span class="value" id="frontend-url">-</span>
+        </div>
+        <div class="info-line">
+          <span class="label">Hostname:</span>
+          <span class="value" id="hostname">-</span>
+        </div>
+        <div class="info-line">
+          <span class="label">Protocolo:</span>
+          <span class="value" id="protocol">-</span>
+        </div>
+        <div class="info-line">
+          <span class="label">URL Backend (esperada):</span>
+          <span class="value" id="backend-url">-</span>
+        </div>
+        <div class="info-line">
+          <span class="label">Conexão de Internet:</span>
+          <span class="value" id="online-status">-</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>🧪 Testes de Conexão</h2>
+
+        <h3>1. Teste de Ping (DNS)</h3>
+        <p>Verifica se consegue atingir o servidor</p>
+        <button onclick="testarPing()">Testar Ping</button>
+        <div class="result" id="ping-result" style="display: none"></div>
+
+        <h3>2. Teste de Conexão HTTP</h3>
+        <p>Faz uma requisição simples ao backend</p>
+        <button onclick="testarConexao()">Testar Conexão</button>
+        <div class="result" id="conexao-result" style="display: none"></div>
+
+        <h3>3. Teste de Preflight CORS</h3>
+        <p>Verifica se o servidor aceita requisições de origem diferente</p>
+        <button onclick="testarCORS()">Testar CORS</button>
+        <div class="result" id="cors-result" style="display: none"></div>
+
+        <h3>4. Teste de Cálculo de Rota (Completo)</h3>
+        <p>Simula uma requisição real de cálculo de rota</p>
+        <button onclick="testarRotaCompleta()">Testar Rota</button>
+        <div class="result" id="rota-result" style="display: none"></div>
+
+        <h3>5. Teste de POIs</h3>
+        <p>Testa requisição de Pontos de Interesse</p>
+        <button onclick="testarPOIs()">Testar POIs</button>
+        <div class="result" id="pois-result" style="display: none"></div>
+      </div>
+
+      <div class="section">
+        <h2>🔍 Console de Logs</h2>
+        <button onclick="limparLogs()">Limpar Logs</button>
+        <button onclick="downloadLogs()" class="danger">Baixar Logs</button>
+        <div class="result" id="logs-output"></div>
+      </div>
+    </div>
+
+    <script>
+      // Variáveis globais
+      const LOGS = [];
+      let BACKEND_URL = "";
+
+      // Calcula Backend URL igual ao index.js
+      function calcularBackendURL() {
+        if (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"
+        ) {
+          return "http://localhost:8080/api";
+        } else {
+          const protocol = window.location.protocol;
+          const hostname = window.location.hostname;
+          return `${protocol}//${hostname}:8080/api`;
+        }
+      }
+
+      // Logger customizado
+      function log(message, type = "info") {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${message}`;
+        LOGS.push({ message: logEntry, type });
+        console.log(logEntry);
+        atualizarLogsUI();
+      }
+
+      function atualizarLogsUI() {
+        const logsDiv = document.getElementById("logs-output");
+        logsDiv.innerHTML = LOGS.map(
+          (l) =>
+            `<div style="color: ${l.type === "error" ? "#f87171" : l.type === "success" ? "#4ade80" : "#38bdf8"}">${l.message}</div>`,
+        ).join("");
+        logsDiv.scrollTop = logsDiv.scrollHeight;
+      }
+
+      function limparLogs() {
+        LOGS.length = 0;
+        atualizarLogsUI();
+      }
+
+      function downloadLogs() {
+        const text = LOGS.map((l) => l.message).join("\n");
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `debug-logs-${new Date().getTime()}.txt`;
+        a.click();
+      }
+
+      function mostrarResultado(elementId, conteudo, tipo = "info") {
+        const el = document.getElementById(elementId);
+        el.innerHTML = conteudo;
+        el.style.display = "block";
+        el.style.borderLeftColor =
+          tipo === "error"
+            ? "#f87171"
+            : tipo === "success"
+              ? "#4ade80"
+              : "#38bdf8";
+      }
+
+      // Inicializar
+      window.addEventListener("load", () => {
+        BACKEND_URL = calcularBackendURL();
+
+        document.getElementById("frontend-url").textContent =
+          window.location.href;
+        document.getElementById("hostname").textContent =
+          window.location.hostname;
+        document.getElementById("protocol").textContent =
+          window.location.protocol;
+        document.getElementById("backend-url").textContent = BACKEND_URL;
+        document.getElementById("online-status").textContent = navigator.onLine
+          ? "✅ Online"
+          : "❌ Offline";
+
+        log("Página de debug carregada", "success");
+        log(`Backend URL: ${BACKEND_URL}`, "info");
+      });
+
+      // Teste 1: Ping (DNS)
+      async function testarPing() {
+        log("🔵 Iniciando teste de ping...", "info");
+        mostrarResultado(
+          "ping-result",
+          "Testando... <div class='loader'></div>",
+          "info",
+        );
+
+        try {
+          const inicio = Date.now();
+          const response = await fetch(
+            `http://${window.location.hostname}:8080/`,
+          );
+          const tempo = Date.now() - inicio;
+
+          if (response.ok) {
+            log(`✅ Servidor respondeu em ${tempo}ms`, "success");
+            mostrarResultado(
+              "ping-result",
+              `<span class="success">✅ Servidor acessível!</span><br>Tempo: ${tempo}ms`,
+              "success",
+            );
+          } else {
+            log(`⚠️ Servidor retornou status ${response.status}`, "error");
+            mostrarResultado(
+              "ping-result",
+              `<span class="error">⚠️ Status ${response.status}</span>`,
+              "error",
+            );
+          }
+        } catch (e) {
+          log(`❌ Erro: ${e.message}`, "error");
+          mostrarResultado(
+            "ping-result",
+            `<span class="error">❌ ${e.message}</span><br>
+                    O servidor na porta 8080 não está acessível.`,
+            "error",
+          );
+        }
+      }
+
+      // Teste 2: Conexão HTTP
+      async function testarConexao() {
+        log("🔵 Iniciando teste de conexão HTTP...", "info");
+        mostrarResultado(
+          "conexao-result",
+          "Testando... <div class='loader'></div>",
+          "info",
+        );
+
+        try {
+          const response = await fetch(`${BACKEND_URL}/`);
+          const texto = await response.text();
+          log(`✅ Conexão bem-sucedida (${response.status})`, "success");
+          mostrarResultado(
+            "conexao-result",
+            `<span class="success">✅ Conexão OK</span><br>
+                    Status: ${response.status}<br>
+                    Resposta: ${texto.substring(0, 200)}...`,
+            "success",
+          );
+        } catch (e) {
+          log(`❌ Erro de conexão: ${e.message}`, "error");
+          mostrarResultado(
+            "conexao-result",
+            `<span class="error">❌ ${e.message}</span>`,
+            "error",
+          );
+        }
+      }
+
+      // Teste 3: CORS
+      async function testarCORS() {
+        log("🔵 Iniciando teste de CORS...", "info");
+        mostrarResultado(
+          "cors-result",
+          "Testando... <div class='loader'></div>",
+          "info",
+        );
+
+        try {
+          const response = await fetch(`${BACKEND_URL}/`, {
+            method: "OPTIONS",
+            headers: {
+              "Access-Control-Request-Method": "POST",
+              "Access-Control-Request-Headers": "Content-Type",
+            },
+          });
+
+          const corsHeaders = {
+            "access-control-allow-origin": response.headers.get(
+              "access-control-allow-origin",
+            ),
+            "access-control-allow-methods": response.headers.get(
+              "access-control-allow-methods",
+            ),
+            "access-control-allow-headers": response.headers.get(
+              "access-control-allow-headers",
+            ),
+          };
+
+          log(`✅ CORS OK - ${JSON.stringify(corsHeaders)}`, "success");
+          mostrarResultado(
+            "cors-result",
+            `<span class="success">✅ CORS Habilitado</span><br>
+                    ${Object.entries(corsHeaders)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join("<br>")}`,
+            "success",
+          );
+        } catch (e) {
+          log(`⚠️ CORS pode estar bloqueado: ${e.message}`, "error");
+          mostrarResultado(
+            "cors-result",
+            `<span class="error">⚠️ ${e.message}</span>`,
+            "error",
+          );
+        }
+      }
+
+      // Teste 4: Rota Completa
+      async function testarRotaCompleta() {
+        log("🔵 Iniciando teste de cálculo de rota...", "info");
+        mostrarResultado(
+          "rota-result",
+          "Testando... <div class='loader'></div>",
+          "info",
+        );
+
+        try {
+          const payload = {
+            origem: "-23.656, -46.476",
+            destino: "-23.550, -46.633",
+            vehicleInfo: {
+              height: 4.4,
+              weight: 45,
+              length: 18.6,
+              axleCount: 6,
+              width: 2.6,
+            },
+            calculate_alternatives: true,
+          };
+
+          log(`📤 Enviando: ${JSON.stringify(payload)}`, "info");
+
+          const response = await fetch(`${BACKEND_URL}/calculate-route`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const dados = await response.json();
+
+          if (response.ok) {
+            log(`✅ Rota calculada com sucesso`, "success");
+            mostrarResultado(
+              "rota-result",
+              `<span class="success">✅ Rota OK</span><br>
+                        ${JSON.stringify(dados, null, 2).substring(0, 500)}...`,
+              "success",
+            );
+          } else {
+            log(`❌ Erro ${response.status}: ${dados.message}`, "error");
+            mostrarResultado(
+              "rota-result",
+              `<span class="error">❌ ${response.status}</span><br>
+                        ${JSON.stringify(dados, null, 2)}`,
+              "error",
+            );
+          }
+        } catch (e) {
+          log(`❌ Erro: ${e.message}`, "error");
+          mostrarResultado(
+            "rota-result",
+            `<span class="error">❌ ${e.message}</span>`,
+            "error",
+          );
+        }
+      }
+
+      // Teste 5: POIs
+      async function testarPOIs() {
+        log("🔵 Iniciando teste de POIs...", "info");
+        mostrarResultado(
+          "pois-result",
+          "Testando... <div class='loader'></div>",
+          "info",
+        );
+
+        try {
+          const polyline = [
+            [-23.656, -46.476],
+            [-23.55, -46.633],
+          ];
+
+          const payload = {
+            polyline: polyline,
+            radius: 50,
+          };
+
+          log(`📤 Buscando POIs...`, "info");
+
+          const response = await fetch(`${BACKEND_URL}/pois-for-route`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const dados = await response.json();
+
+          if (response.ok) {
+            log(`✅ ${dados.pois?.length || 0} POIs encontrados`, "success");
+            mostrarResultado(
+              "pois-result",
+              `<span class="success">✅ POIs OK</span><br>
+                        Encontrados: ${dados.pois?.length || 0}<br>
+                        ${JSON.stringify(dados, null, 2).substring(0, 500)}...`,
+              "success",
+            );
+          } else {
+            log(`❌ Erro ${response.status}`, "error");
+            mostrarResultado(
+              "pois-result",
+              `<span class="error">❌ ${response.status}</span>`,
+              "error",
+            );
+          }
+        } catch (e) {
+          log(`❌ Erro: ${e.message}`, "error");
+          mostrarResultado(
+            "pois-result",
+            `<span class="error">❌ ${e.message}</span>`,
+            "error",
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

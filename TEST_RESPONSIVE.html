@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste Responsivo - RoadTruck</title>
+    <link rel="stylesheet" href="./front-end/CSS/routers.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .debug-info {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #0f0;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 12px;
+        z-index: 9999;
+        font-family: monospace;
+      }
+      .debug-info > div {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
+        <div class="brand">
+          <div class="logo-icon">🚚</div>
+          <h1>RoadTruck<span>Router</span></h1>
+        </div>
+        <div class="user-controls">
+          <span id="user-email">Teste Responsivo</span>
+          <button id="btn-logout" class="btn btn-danger">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="router-main">
+      <aside class="sidebar" id="config-panel">
+        <section class="form-section">
+          <h2>📍 Calcular Rota</h2>
+          <form id="route-form">
+            <div class="form-group">
+              <label for="origem">Origem</label>
+              <input
+                type="text"
+                id="origem"
+                placeholder="Ex: Porto de Santos"
+              />
+            </div>
+            <div class="form-group">
+              <label for="destino">Destino</label>
+              <input type="text" id="destino" placeholder="Ex: São Paulo" />
+            </div>
+            <div class="form-group">
+              <label for="altura">Altura (m)</label>
+              <input type="number" id="altura" placeholder="4.0" />
+            </div>
+            <div class="form-group">
+              <label for="peso">Peso (ton)</label>
+              <input type="number" id="peso" placeholder="30" />
+            </div>
+            <button type="button" id="btn-calcular" class="btn">
+              Calcular
+            </button>
+          </form>
+        </section>
+      </aside>
+
+      <section class="map-container" id="map-container">
+        <div id="map" style="width: 100%; height: 100%; background: #1a1f35">
+          <p style="color: #38bdf8; text-align: center; margin-top: 50px">
+            Mapa Leaflet aqui
+          </p>
+        </div>
+      </section>
+
+      <aside class="sidebar" id="info-panel">
+        <section class="info-section">
+          <h2>📊 Informações da Rota</h2>
+          <div id="info">
+            <p style="color: var(--text-muted)">
+              Selecione uma rota para ver detalhes
+            </p>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="debug-info">
+      <div>Viewport: <span id="viewport-size">--</span></div>
+      <div>Layout: <span id="layout-type">--</span></div>
+      <div>Menu: <span id="menu-state">Fechado</span></div>
+    </div>
+
+    <script>
+      // Sistema de menu responsivo
+      const MobileMenu = (() => {
+        let isMenuOpen = false;
+        let menuToggle = null;
+        let configPanel = null;
+        let infoPanel = null;
+        let backdrop = null;
+
+        const init = () => {
+          menuToggle = document.getElementById("menu-toggle");
+          configPanel = document.getElementById("config-panel");
+          infoPanel = document.getElementById("info-panel");
+
+          if (!menuToggle || !configPanel) {
+            console.error("❌ Elementos do menu não encontrados!");
+            return false;
+          }
+
+          backdrop = document.getElementById("menu-backdrop");
+          if (!backdrop) {
+            backdrop = document.createElement("div");
+            backdrop.id = "menu-backdrop";
+            backdrop.className = "menu-backdrop";
+            document.body.appendChild(backdrop);
+          }
+
+          setupEventListeners();
+          console.log("✅ Sistema de menu inicializado!");
+          return true;
+        };
+
+        const setupEventListeners = () => {
+          menuToggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle();
+          });
+
+          backdrop.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            close();
+          });
+
+          document.addEventListener("click", (e) => {
+            if (window.innerWidth > 768 || !isMenuOpen) return;
+            const isMenuClick =
+              e.target.closest(".menu-toggle") || e.target.closest(".sidebar");
+            if (!isMenuClick) close();
+          });
+
+          window.addEventListener("resize", () => {
+            updateDebugInfo();
+            if (window.innerWidth > 768 && isMenuOpen) close();
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isMenuOpen && window.innerWidth <= 768) {
+              close();
+            }
+          });
+        };
+
+        const open = () => {
+          if (isMenuOpen) return;
+          isMenuOpen = true;
+          configPanel.classList.add("active");
+          if (infoPanel) infoPanel.classList.add("active");
+          menuToggle.classList.add("active");
+          backdrop.classList.add("active");
+          document.body.style.overflow = "hidden";
+          updateDebugInfo();
+        };
+
+        const close = () => {
+          if (!isMenuOpen) return;
+          isMenuOpen = false;
+          configPanel.classList.remove("active");
+          if (infoPanel) infoPanel.classList.remove("active");
+          menuToggle.classList.remove("active");
+          backdrop.classList.remove("active");
+          document.body.style.overflow = "auto";
+          updateDebugInfo();
+        };
+
+        const toggle = () => {
+          isMenuOpen ? close() : open();
+        };
+
+        return { init, open, close, toggle };
+      })();
+
+      // Debug info
+      function updateDebugInfo() {
+        const width = window.innerWidth;
+        let layout = "Desktop (≥1200px)";
+        if (width <= 768) layout = "Mobile (≤768px)";
+        else if (width <= 1199) layout = "Tablet (769-1199px)";
+
+        document.getElementById("viewport-size").textContent = `${width}px`;
+        document.getElementById("layout-type").textContent = layout;
+        document.getElementById("menu-state").textContent = document
+          .getElementById("config-panel")
+          ?.classList.contains("active")
+          ? "Aberto"
+          : "Fechado";
+      }
+
+      window.addEventListener("resize", updateDebugInfo);
+      window.addEventListener("orientationchange", updateDebugInfo);
+
+      // Inicializar
+      document.addEventListener("DOMContentLoaded", () => {
+        MobileMenu.init();
+        updateDebugInfo();
+        console.log("✅ Página de teste carregada!");
+      });
+    </script>
+  </body>
+</html>

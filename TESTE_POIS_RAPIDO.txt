@@ -1,0 +1,91 @@
+# 🧪 TESTE RÁPIDO: POIs no Mapa
+
+## 1️⃣ Começar Testes
+
+```
+1. Abra http://localhost:8080/pages/router.html
+2. Abra DevTools (F12) → Console
+3. Preencha o formulário:
+   - Origem: São Paulo
+   - Destino: Rio de Janeiro
+   - Altura: 3.8
+   - Peso: 20
+   - Eixos: 3
+```
+
+## 2️⃣ Clicar em "Traçar Rota Segura"
+
+**Console deve mostrar:**
+```
+✅ "Buscando POIs com title: Serviços na Rota 1"
+✅ "Enviando requisição POST para /pois-for-route"
+✅ "Resposta do servidor /pois-for-route: {...}"
+✅ "✅ X POIs encontrados na rota"
+```
+
+## 3️⃣ Verificar Mapa
+
+**Deve aparecer:**
+- 🔵 Rota verde no mapa (São Paulo → Rio)
+- 🚩 Marcador de origem e destino
+- ⛽🛑 Marcadores de postos e pedágios na rota
+- 📍 Lista no painel direito com serviços
+
+## 4️⃣ Testar Interações
+
+### Filtro "Pedágios":
+```
+Clique em "Pedágios" no painel
+→ Lista deve mostrar apenas 🛑
+→ Marcadores no mapa mudam para vermelho
+```
+
+### Filtro "Postos":
+```
+Clique em "Postos" no painel
+→ Lista deve mostrar apenas ⛽
+→ Marcadores no mapa mudam para laranja
+```
+
+### Clicar em POI:
+```
+Clique em "⛽ Posto BR" na lista
+→ Mapa centraliza naquele local
+→ Zoom entra a 16
+```
+
+## ⚡ Rotas com Muitos POIs (Para Testar Melhor)
+
+```
+✅ São Paulo → Campinas (muitos pedágios)
+✅ São Paulo → Sorocaba (postos e pedágios)
+✅ Rio → Niterói (rota curta, alguns POIs)
+```
+
+## ❌ Problema?
+
+Se não aparecer nada:
+
+1. **Verifique Console:**
+   ```
+   ❌ Erro de conexão?
+   → Servidor backend pode estar offline
+   → Verifique se START_SERVER_24H.bat está rodando
+   ```
+
+2. **Verifique Backend:**
+   ```
+   Acesse: http://localhost:8080/api/pois-for-route
+   Body: {"polyline": "string ou array"}
+   → Deve retornar {"success": true, "pois": [...]}
+   ```
+
+3. **Verifique Logs do Server:**
+   ```
+   Terminal onde Node.js está rodando
+   Procure por: "POIs" ou "Overpass"
+   ```
+
+---
+
+**Sucesso:** Quando ver marcadores no mapa + lista no painel lateral! 🎉

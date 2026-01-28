@@ -1,0 +1,822 @@
+/* ======================================================== */
+/* 1. VARIÁVEIS DE CORES (MINIMALISTA / NEUMORFISMO) */
+/* ======================================================== */
+:root {
+  --primary-color: #00bcd4; /* CIANO VIBRANTE: Destaque e Ações */
+  --secondary-color: #6c757d; /* Cinza suave para texto auxiliar */
+  --success-color: #48bb78; /* Verde para Aprovação */
+  --danger-color: #e53e3e; /* Vermelho para Exclusão */
+  --warning-color: #f6ad55; /* Laranja/Amarelo para Pendente */
+
+  /* Cores de Fundo (Alto Contraste) */
+  --bg-dark: #1e252e; /* FUNDO: Cinza/Azul Escuro Profundo */
+  --card-bg: #27303c; /* CARD: Um pouco mais claro que o fundo */
+  --text-light: #e2e8f0; /* Texto Principal */
+  --text-muted: #a0aec0; /* Texto Secundário */
+
+  /* Efeitos Neumórficos (Sombras) */
+  --shadow-light: #313d4b;
+  --shadow-dark: #10151a;
+  --neumo-out: 8px 8px 16px var(--shadow-dark),
+    -8px -8px 16px var(--shadow-light); /* Flutuar */
+  --neumo-in: inset 4px 4px 8px var(--shadow-dark),
+    inset -4px -4px 8px var(--shadow-light); /* Afundar */
+
+  /* Classes auxiliares para Tailwind */
+  --color-warning-tailwind: var(--warning-color);
+  --color-success-tailwind: var(--success-color);
+}
+/* Utility classes para Tailwind (para usar as variáveis) */
+.text-primary-color {
+  color: var(--primary-color);
+}
+.text-warning-color {
+  color: var(--warning-color);
+}
+.text-success-color {
+  color: var(--success-color);
+}
+.border-shadow-light {
+  border-color: var(--shadow-light);
+}
+
+/* ======================================================== */
+/* 2. ESTRUTURA GLOBAL E BASE */
+/* ======================================================== */
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  margin: 0;
+  line-height: 1.6;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ======================================================== */
+/* 3. SIDEBAR FIXO */
+/* ======================================================== */
+.sidebar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: var(--card-bg);
+  padding: 50px 0;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-header {
+  text-align: center;
+  padding: 5px 0 10px;
+  font-size: 1.8em;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav a {
+  display: block;
+  padding: 15px 30px;
+  color: var(--text-light);
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s, border-left 0.3s;
+  border-left: 4px solid transparent;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background-color: var(--bg-dark);
+  border-left-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.sidebar-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid var(--shadow-dark);
+}
+
+.sidebar-footer #logout-btn {
+  background-color: transparent;
+  border: 1px solid var(--secondary-color);
+  color: var(--secondary-color);
+  width: 100%;
+  margin-top: 0;
+  font-size: 0.9em;
+}
+.sidebar-footer #logout-btn:hover {
+  background-color: var(--danger-color);
+  color: var(--text-light);
+}
+
+/* ======================================================== */
+/* 4. CONTEÚDO PRINCIPAL E CARDS */
+/* ======================================================== */
+.main-content-wrapper {
+  flex-grow: 1;
+  /* Tailwind 'p-8' já cuida do padding, mas mantemos o margin para desktop */
+  margin-left: 250px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  /* Efeito de FLUTUAÇÃO (OUT) */
+  box-shadow: var(--neumo-out);
+  transition: box-shadow 0.3s;
+}
+.card-blocked {
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: 18px;
+  margin-bottom: 30px;
+
+  box-shadow: var(--neumo-out);
+  transition: box-shadow 0.3s;
+  border: 1px solid var(--danger-color);
+}
+
+h2 {
+  color: var(--text-light);
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+h3 {
+  /* Estilo para títulos de seção dentro dos cards */
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.4em;
+}
+
+/* Inputs e Campos (Efeito de AFUNDAR - IN) */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+.input-neumo {
+  /* Nova classe para inputs */
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+
+  box-shadow: var(--neumo-in);
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus,
+.input-neumo:focus {
+  box-shadow: 0 0 0 3px var(--primary-color);
+  outline: none;
+  background-color: var(--card-bg);
+}
+
+/* ======================================================== */
+/* 5. DASHBOARD E LISTA DE CLIENTES */
+/* ======================================================== */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.metric-card {
+  background-color: var(--card-bg);
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: var(--neumo-out);
+  border-left: 5px solid var(--primary-color);
+  transition: transform 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+}
+
+.metric-card h3 {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  text-transform: uppercase;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.metric-card .value {
+  font-size: 2.5em;
+  font-weight: 700;
+  /* As cores são definidas no HTML/Tailwind para flexibilidade (text-warning-color, text-success-color) */
+}
+
+.clients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.client-item {
+  background-color: var(--card-bg);
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr;
+  gap: 20px;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.client-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neumo-out);
+}
+
+.client-info strong {
+  display: block;
+  font-size: 1.1em;
+  color: var(--text-light);
+}
+
+.client-info span {
+  font-size: 0.85em;
+  color: var(--text-muted);
+}
+
+.client-status {
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px; /* Capsula */
+  text-align: center;
+  font-size: 0.85em;
+}
+
+.status-pending {
+  color: var(--warning-color);
+  border: 1px solid var(--warning-color);
+}
+.status-approved {
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.client-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+/* Remova o display: none e ajuste as cores */
+.status-blocked {
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 0.85em;
+}
+.btn-warning {
+  background-color: var(--warning-color);
+  color: var(--bg-dark);
+}
+.btn-warning:hover {
+  background-color: #e69a44; /* Um tom mais escuro de laranja */
+}
+
+/* ======================================================== */
+/* 6. BOTÕES DE AÇÃO (Com Efeito Neumórfico) */
+/* ======================================================== */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s ease-out;
+  width: 100%;
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  box-shadow: var(--neumo-out); /* Flutuando por padrão */
+}
+
+.btn:active,
+.btn-loading {
+  box-shadow: var(--neumo-in) !important;
+  transform: translate(1px, 1px);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--bg-dark);
+}
+.btn-primary:hover {
+  background-color: #00a9bc;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: var(--bg-dark);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: var(--text-light);
+  width: auto;
+}
+
+/*============================================*/
+/*  MOVA DASHBOARD  */
+/*============================================*/
+
+.content-view {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-nav a.active {
+  background-color: var(--bg-dark);
+  border-left-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: var(--neumo-in);
+}
+
+.client-info p {
+  grid-column: span 3;
+  word-break: break-word;
+  font-size: 0.9em;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* efeito para mensagem não lidas */
+
+.border-l-4 {
+  border-left-width: 5px !important;
+}
+/*============================================*/
+
+/* Estado de Carregamento e Sucesso (Manter estilos originais) */
+/* ... (Manter as regras @keyframes spin, .btn-loading, .btn-done) ... */
+
+/* ======================================================== */
+/* 7. MEDIA QUERIES */
+/* ======================================================== */
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+  .main-content-wrapper {
+    margin-left: 0;
+    padding-top: 0;
+  }
+  .sidebar-nav ul {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  .sidebar-nav a {
+    padding: 10px 15px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  .sidebar-nav a:hover,
+  .sidebar-nav a.active {
+    border-bottom-color: var(--primary-color);
+    border-left: none;
+  }
+  .sidebar-footer {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .client-item {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .client-actions {
+    justify-content: space-around;
+  }
+}
+/* ======================================================== */
+/* 8. MEDIA QUERIES (RESPONSIVIDADE) */
+/* ======================================================== */
+
+@media (max-width: 850px) {
+  .client-item {
+    /* Muda para um layout empilhado de duas colunas */
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas:
+      "info status"
+      "actions actions";
+  }
+
+  .client-info {
+    grid-area: info;
+  }
+
+  .client-status {
+    grid-area: status;
+    align-self: flex-start;
+    justify-self: flex-end;
+  }
+
+  .client-actions {
+    grid-area: actions;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+}
+
+/* Tablets - 1024px e menores */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content-wrapper {
+    margin-left: 200px;
+    padding: 20px;
+  }
+
+  .main-header {
+    margin-bottom: 20px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .client-item {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .client-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Tablets pequenos - 768px */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px;
+    padding: 15px 0;
+  }
+
+  .sidebar-header {
+    font-size: 1.3em;
+    padding: 8px 0 20px;
+  }
+
+  .sidebar-nav a {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  .main-content-wrapper {
+    margin-left: 180px;
+    padding: 15px;
+  }
+
+  .main-header {
+    margin-bottom: 15px;
+  }
+
+  .main-header h2 {
+    font-size: 1.3em;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+
+  .metric-card {
+    padding: 15px;
+  }
+
+  .metric-card h3 {
+    font-size: 0.8em;
+  }
+
+  .metric-card .value {
+    font-size: 1.8em;
+  }
+
+  .card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  .input-neumo {
+    padding: 10px;
+  }
+
+  .client-item {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .client-info strong {
+    font-size: 1em;
+  }
+
+  .client-info span {
+    font-size: 0.8em;
+  }
+
+  .client-status {
+    padding: 4px 8px;
+    font-size: 0.75em;
+  }
+
+  .client-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    width: 100%;
+  }
+
+  .btn.btn-secondary {
+    display: none;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  form input {
+    width: 100%;
+  }
+
+  form button {
+    width: 100%;
+  }
+}
+
+/* Celulares - até 600px */
+@media (max-width: 600px) {
+  body {
+    font-size: 13px;
+  }
+
+  .sidebar {
+    width: 150px;
+    padding: 10px 0;
+  }
+
+  .sidebar-header {
+    font-size: 1.1em;
+    padding: 5px 0 15px;
+  }
+
+  .sidebar-header span {
+    font-size: 0.7em;
+  }
+
+  .sidebar-nav a {
+    padding: 10px 15px;
+    font-size: 0.8rem;
+  }
+
+  .sidebar-footer {
+    padding: 10px;
+  }
+
+  .sidebar-footer #logout-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .main-content-wrapper {
+    margin-left: 150px;
+    padding: 10px;
+  }
+
+  .main-header h2 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .metric-card {
+    padding: 12px;
+    border-left-width: 3px;
+  }
+
+  .metric-card h3 {
+    font-size: 0.75em;
+  }
+
+  .metric-card .value {
+    font-size: 1.5em;
+  }
+
+  .card {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+  }
+
+  h2 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  h3 {
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  .input-neumo {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .input-neumo:focus {
+    box-shadow: 0 0 0 2px var(--primary-color);
+  }
+
+  .client-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px 15px;
+  }
+
+  .client-info strong {
+    font-size: 0.95em;
+    margin-bottom: 3px;
+  }
+
+  .client-info span {
+    font-size: 0.75em;
+    display: block;
+    margin: 2px 0;
+  }
+
+  .client-status {
+    padding: 3px 6px;
+    font-size: 0.7em;
+    width: fit-content;
+  }
+
+  .client-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .btn i {
+    display: none; /* Esconde ícones em mobile para economizar espaço */
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  form input {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  form button {
+    width: 100%;
+    padding: 8px 10px;
+  }
+
+  .no-clients-message {
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 0.9em;
+  }
+}
+
+/* Celulares muito pequenos - até 360px */
+@media (max-width: 360px) {
+  .sidebar {
+    width: 130px;
+  }
+
+  .sidebar-header {
+    font-size: 0.95em;
+  }
+
+  .sidebar-nav a {
+    padding: 8px 10px;
+    font-size: 0.7rem;
+  }
+
+  .main-content-wrapper {
+    margin-left: 130px;
+    padding: 8px;
+  }
+
+  .main-header h2 {
+    font-size: 1em;
+  }
+
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-size: 0.9em;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 5px 6px;
+    font-size: 0.65rem;
+  }
+
+  .client-info strong {
+    font-size: 0.85em;
+  }
+
+  .client-info span {
+    font-size: 0.7em;
+  }
+}

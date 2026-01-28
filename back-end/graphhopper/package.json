@@ -1,0 +1,12 @@
+{
+  "name": "graphhopper-config-validate",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "iconv-lite": "^0.6.3",
+    "js-yaml": "^4.1.1"
+  },
+  "scripts": {
+    "validate": "node validate-config.js"
+  }
+}

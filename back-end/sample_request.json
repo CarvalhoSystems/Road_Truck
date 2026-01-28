@@ -1,0 +1,11 @@
+{
+  "origem": { "latitude": -23.5505, "longitude": -46.6333 },
+  "destino": { "latitude": -34.6037, "longitude": -58.3816 },
+  "vehicleInfo": {
+    "height": 4.5,
+    "length": 18.75,
+    "width": 2.6,
+    "weight": 35,
+    "axleCount": 5
+  }
+}

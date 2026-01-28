@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aguardando Aprovação</title>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="../img/favicon-96x96.png"
+    />
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg" />
+    <link rel="shortcut icon" href="../img/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../img/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link rel="mask-icon" href="../img/safari-pinned-tab.svg" color="#5bbad5" />
+
+    <link rel="stylesheet" href="../CSS/pending.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--Swal Alert-->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="waiting-container">
+      <div class="icon-wrapper">
+        <span class="wait-icon">🕒</span>
+        <button type="button" id="btn-logout" class="btn btn-danger">
+          Sair
+        </button>
+      </div>
+
+      <h1>Cadastro Recebido com Sucesso!</h1>
+
+      <p class="message">
+        Obrigado por se cadastrar. Sua solicitação foi enviada para nossa
+        equipe.
+      </p>
+
+      <p class="instruction">
+        Iremos analisar seus dados e, após a aprovação, você sera redirecionado
+        a pagina de Navegação. Obrigado por se cadastrar!
+      </p>
+
+      <div class="loading-bar">
+        <div class="progress"></div>
+      </div>
+
+      <p class="contact-info">
+        O tempo de aprovação é, geralmente, <br />de **12 a 24 horas**.
+        <br />
+        Em caso de dúvidas, entre em contato conosco.
+      </p>
+    </div>
+
+    <script type="module" src="../JS/auth.js"></script>
+    <script type="module" src="../JS/config.js"></script>
+    <script type="module" src="../JS/pending.js"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  # Backend Node.js
+  backend:
+    build:
+      context: .
+      dockerfile: back-end/Dockerfile
+    container_name: road-truck-backend
+    ports:
+      - "8081:8081"
+    environment:
+      NODE_ENV: production
+      PORT: 8081
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      TOMTOM_API_KEY: ${TOMTOM_API_KEY:-}
+      HERE_API_KEY: ${HERE_API_KEY:-}
+      GH_SERVER_URL: ${GH_SERVER_URL:-http://graphhopper:8989}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8081}
+    depends_on:
+      - graphhopper
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # GraphHopper (Roteamento offline)
+  graphhopper:
+    build:
+      context: back-end/graphhopper
+      dockerfile: Dockerfile
+    container_name: road-truck-graphhopper
+    ports:
+      - "8989:8989"
+    environment:
+      JAVA_OPTS: -Xmx4g
+    volumes:
+      - ./back-end/graphhopper/config.yml:/graphhopper/config.yml:ro
+      - graphhopper-data:/graphhopper/data
+      - graphhopper-cache:/graphhopper/graph-cache
+    restart: unless-stopped
+
+volumes:
+  graphhopper-data:
+    driver: local
+  graphhopper-cache:
+    driver: local
+
+networks:
+  default:
+    name: road-truck-network
+    driver: bridge

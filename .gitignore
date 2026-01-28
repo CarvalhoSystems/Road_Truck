@@ -1,0 +1,38 @@
+# Dependências do Node.js
+node_modules/
+back-end/node_modules/
+
+# Arquivos de dados do GraphHopper
+back-end/graphhopper/data/*.pbf
+back-end/graphhopper/data/*.osm
+
+# Cache e builds do Java/GraphHopper
+target/
+build/
+*.class
+*.jar
+
+# Logs e arquivos de sistema
+*.log
+.DS_Store
+
+# --- ADICIONE OU AO MENOS GARANTA ESTAS LINHAS ABAIXO ---
+
+# Variáveis de ambiente (raiz e dentro da pasta back-end)
+.env
+back-end/.env
+
+# Certificados SSL (que não vamos usar no Render)
+certs/
+back-end/certs/
+
+# Git ignore global
+.gitignore_global
+git remote add origin https://github.com/CarvalhoSystems/Road_Truck.
+
+#cahe do GraphHopper
+back-end/graphhopper/cache/
+back-end/graphhopper/graph-cache/
+*.pbf
+*.osm
+node_modules/

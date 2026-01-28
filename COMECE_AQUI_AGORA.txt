@@ -1,0 +1,153 @@
+🚛 ROAD-TRUCK: COMEÇAR AGORA (PASSO A PASSO)
+============================================
+
+⏱️ Tempo total: ~2 minutos
+
+PASSO 1: Abra 2 Prompts de Comando
+==================================
+
+Pressione: Win + R
+Digite: cmd
+Pressione: Enter
+
+[Faça isso 2 vezes para ter 2 janelas abertas]
+
+
+PASSO 2: TERMINAL 1 - Iniciar GraphHopper (Motor de Rotas)
+===========================================================
+
+Na PRIMEIRA janela do Prompt:
+
+cd C:\Road-Truck
+
+SERVER_JAVA.bat
+
+Aguarde até ver uma mensagem como:
+   "✅ GraphHopper started"
+   ou
+   "Listening on port 8989"
+
+⏳ Pode levar 10-15 segundos
+
+
+PASSO 3: TERMINAL 2 - Iniciar Node.js Server
+==============================================
+
+Na SEGUNDA janela do Prompt:
+
+cd C:\Road-Truck
+
+START_SERVER_24H.bat
+
+Aguarde até ver:
+   "✅ Servidor rodando na porta 8080"
+   ou
+   "🚀 Servidor rodando"
+
+
+PASSO 4: Testar no Navegador
+=============================
+
+Abra seu navegador e acesse:
+
+   http://localhost:8080
+
+✅ Deve abrir a página do Road-Truck
+
+
+PASSO 5: Calcular uma Rota de Teste
+====================================
+
+1. Preencha os campos:
+   - Origem: "São Paulo"
+   - Destino: "Rio de Janeiro"
+   - Altura: 3.8
+   - Peso: 20
+   - Eixos: 3
+
+2. Clique em "Calcular Rota"
+
+3. Aguarde 5-10 segundos
+
+4. ✅ Deve aparecer a rota no mapa!
+
+
+PASSO 6 (OPCIONAL): Deixar Rodando 24h
+=======================================
+
+Para seu servidor iniciar AUTOMATICAMENTE ao ligar o PC:
+
+1. Pressione: Win + R
+2. Digite: taskschd.msc
+3. Enter
+
+4. Lado direito: "Criar Tarefa..."
+
+5. Configure com os dados do arquivo:
+   C:\Road-Truck\README_PRODUCAO.md
+   (Procure por "Task Scheduler")
+
+6. Pronto! Seu servidor iniciará sozinho
+
+
+ERROS COMUNS
+============
+
+❌ "Erro de conexão"
+   → Verifique se os 2 Prompts estão rodando
+   → Aguarde mais 10 segundos
+   → Task Manager: verifique se node.exe e java.exe existem
+
+❌ "Erro ao calcular rota"
+   → GraphHopper não respondeu
+   → Reinicie o arquivo SERVER_JAVA.bat
+   → Verifique no Task Manager se há processo java
+
+❌ "Timeout"
+   → Sua internet está lenta
+   → Tente de novo em alguns segundos
+
+
+VERIFICAÇÃO RÁPIDA
+==================
+
+Se quiser saber se tudo está OK:
+
+1. Abra um Prompt
+
+2. Execute:
+   tasklist | findstr node
+
+   Se aparecer "node.exe" → ✅ Node.js está rodando
+
+3. Execute:
+   tasklist | findstr java
+
+   Se aparecer "java.exe" → ✅ GraphHopper está rodando
+
+4. Execute:
+   curl http://localhost:8080/api/ping
+
+   Se aparecer JSON com "ok": true → ✅ Servidor responde
+
+
+PRÓXIMO PASSO
+=============
+
+Leia o arquivo:
+
+   C:\Road-Truck\README_PRODUCAO.md
+
+Para aprender como deixar 100% automático e entender
+como o sistema funciona.
+
+
+SUCESSO! 🚛
+===========
+
+Seu servidor Road-Truck agora está rodando!
+
+Se tiver dúvidas, veja os logs nos Prompts - eles explicam
+exatamente o que está acontecendo.
+
+✅ PRONTO PARA 24 HORAS!

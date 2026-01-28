@@ -1,0 +1,49 @@
+USBC`ï¿½ï¿½
+*ï¿½ï¿½wï¿½3`Hï¿½ï¿½ï¿½jï¿½`ï¿½ï¿½ï¿½jï¿½`ï¿½ï¿½ï¿½jï¿½jï¿½ï¿½jï¿½ 0ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½jï¿½ bundleApiCaller.js.mapï¿½H@ï¿½ï¿½1ï¿½#ï¿½ï¿½ï¿½ï¿½ï¿½yG3graphhopper:
+  graph.location: graph-cache
+
+  # Especifica o caminho para o arquivo de mapa .osm.pbf.
+  # O arquivo deve estar no diretÃ³rio mapeado para /graphhopper/data no Docker.
+  datareader.file: "americas-sul.osm.pbf"
+  # Lista de perfis de veÃ­culos a serem ativados.
+  # Para habilitar custos de conversÃ£o (penalidade por virar), adicione '|turn_costs=true'.
+  graph.flag_encoders: car
+
+  # Valores necessÃ¡rios para os perfis. Para a v0.12, muitos valores sÃ£o implÃ­citos nos flag_encoders.
+  # Adicionamos 'road_class' e 'max_speed' como exemplo de valores extras.
+  graph.encoded_values: road_class,max_speed
+
+  # Exclui vias nÃ£o relevantes para veÃ­culos motorizados para otimizar o grafo.
+  import.osm.ignored_highways: footway,construction,cycleway,path,steps,track'
+  prepare.min_network_size: 200
+
+  # Habilita o modo de aceleraÃ§Ã£o (Contraction Hierarchies) para os perfis.
+  # A sintaxe para v0.12 usa 'prepare.ch.weightings'. 'fastest' Ã© o padrÃ£o para car e truck.
+  prepare.ch.weightings: fastest
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8991 # Porta alterada para 8991
+      bindHost: 0.0.0.0 # Permite acesso externo
+      # >>> ADICIONE AQUI <<<
+      idleTimeout: 10 minutes # 10 minutos (600 segundos) para o servidor nÃ£o dar timeout na importaÃ§Ã£o
+
+  requestLog:
+    appenders: []
+
+  adminConnectors:
+    - type: http
+      port: 8992 # Porta alterada para 8992
+      bindHost: 0.0.0.0 # Permite acesso externo
+      # >>> ADICIONE AQUI <<<
+      idleTimeout: 10 minutes # 10 minutos para a porta administrativa (apenas por seguranÃ§a)
+
+# See https://www.dropwizard.io/en/latest/manual/core.html#logging
+logging:
+  appenders:
+    - type: file
+      timeZone: UTC
+      currentLogFilename: logs/graphhopper.log
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+      a

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Road-Truck - Rotas Inteligentes</title>
+    <link rel="stylesheet" href="../CSS/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bibliotec sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="./img/favicon-96x96.png"
+    />
+    <link rel="icon" type="image/svg+xml" href="./img/favicon.svg" />
+    <link rel="shortcut icon" href="./img/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./img/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="mask-icon" href="./img/safari-pinned-tab.svg" color="#5bbad5" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- FIX: Correção de Layout Mobile (Road-Truck) -->
+  </head>
+  <!-- Nav-Bar -->
+  <body>
+    <header class="main-header">
+      <nav class="navbar container">
+        <div class="logo">Road-Truck</div>
+        <div class="menu-toggle" id="mobile-menu">
+          <i class="fas fa-bars"></i>
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a id="id-modal-btn" class="btn-primary-Quem-somos">Quem somos</a>
+          </li>
+          <li>
+            <a id="id-modal-btn-2" class="btn-primary-Como-funciona"
+              >Como Funciona</a
+            >
+          </li>
+          <li>
+            <a
+              id="open-modal-btn-nav"
+              class="btn-primary-fale-conosco open-modal-trigger"
+              >Fale Conosco</a
+            >
+          </li>
+          <li>
+            <a href="pages/login.html" class="btn btn-primary"
+              >LOGIN / CADASTRO</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <!--Letreiro Principal-->
+      <div class="header-content container">
+        <h1>
+          Dirija com a Certeza de um Profissional. A Rota Certa para Carretas,
+          na Sua Mão..
+        </h1>
+        <p>
+          Otimização de trajetos para veículos pesados com cobrança mensal
+          acessível
+        </p>
+
+        <a
+          href="https://mpago.la/1b7xa34"
+          target="_blank"
+          class="btn btn-secondary"
+          >Assine Agora - R$49/mês</a
+        >
+      </div>
+    </header>
+    <!--seção de icon-->
+    <section class="features container">
+      <div class="feature-item">
+        <div class="icon-placeholder icon-route"></div>
+        <h3>Route Optimization</h3>
+      </div>
+
+      <div class="feature-item">
+        <div class="icon-placeholder icon-gps"></div>
+        <h3>GPS para Trucks</h3>
+      </div>
+
+      <div class="feature-item">
+        <div class="icon-placeholder icon-report"></div>
+        <h3>Reports</h3>
+      </div>
+
+      <div class="feature-item">
+        <div class="icon-placeholder icon-support"></div>
+        <h3>Support</h3>
+      </div>
+    </section>
+
+    <section class="dashboard-pricing container">
+      <div class="dashboard-preview">
+        <div class="logo-small">⬢ Truck</div>
+        <div class="preview-content"></div>
+      </div>
+
+      <div class="pricing-section">
+        <!-- Container que agrupa os cartões de preço -->
+        <div class="pricing-container">
+          <div class="pricing-card">
+            <span class="badge-free-trial">7 Dias Grátis</span>
+            <h3 class="card-titulo">Plano Mensal</h3>
+            <p class="preco">R$ 49,00<span class="periodo">/mês</span></p>
+
+            <ul class="beneficio-lista">
+              <li>
+                <span class="check-icon">✓</span> Acesso completo ao programa
+              </li>
+              <li>
+                <span class="check-icon">✓</span> Flexibilidade de cancelamento
+              </li>
+              <li><span class="check-icon">✓</span> Suporte Básico</li>
+            </ul>
+            <a
+              href="https://mpago.la/1b7xa34"
+              target="_blank"
+              class="card-botao"
+            >
+              Assinar Mensal (R$ 49,00)
+            </a>
+          </div>
+
+          <div class="pricing-card destaque">
+            <span class="badge">Economize 15%</span>
+            <h3 class="card-titulo">Plano Anual</h3>
+            <p class="preco">R$ 499,00<span class="periodo">/ano</span></p>
+
+            <ul class="beneficio-lista">
+              <li><span class="check-icon">✓</span> **Maior Economia!**</li>
+              <li>
+                <span class="check-icon">✓</span> Acesso completo ao programa
+                por 1 ano
+              </li>
+              <li><span class="check-icon">✓</span> Suporte Prioritário</li>
+              <li>
+                <span class="check-icon">✓</span> 12 meses pelo preço de 10!
+              </li>
+            </ul>
+            <a
+              href="https://mpago.la/1LZSAcF"
+              target="_blank"
+              class="card-botao"
+            >
+              Assinar Anual (R$ 499,00)
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      <div class="footer-links container">
+        <div class="footer-group">
+          <span class="faq">CS</span>
+          <span class="link-text">Appokos</span>
+          <span class="sub-text">Demonstration</span>
+        </div>
+        <div class="footer-group">
+          <span class="faq">CS</span>
+          <span class="link-text">Logistics</span>
+          <span class="sub-text">FAQs</span>
+        </div>
+        <div class="footer-group">
+          <span class="faq">CS</span>
+          <span class="link-text">Security</span>
+          <span class="sub-text">Consiltcompoisinas</span>
+        </div>
+        <!-- CORREÇÃO: Botão agora tem o ID correto para abrir o modal -->
+        <!--
+        <button
+          id="open-modal-btn-nav"
+          class="btn-primary-fale-conosco open-modal-trigger"
+        >
+          Fale Conosco / Envie sua Dúvida
+        </button>
+        --->
+      </div>
+    </footer>
+
+    <div id="contact-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+
+        <h2>Fale Conosco</h2>
+        <p>
+          Preencha os campos abaixo para enviar suas dúvidas ou solicitar uma
+          cotação.
+        </p>
+
+        <form id="contact-form" action="/api/contact" method="POST">
+          <div class="form-group">
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="assunto">Assunto:</label>
+            <input type="text" id="assunto" name="assunto" required />
+          </div>
+
+          <div class="form-group">
+            <label for="mensagem">Mensagem / Dúvida:</label>
+            <textarea
+              id="mensagem"
+              name="mensagem"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="contato">Telefone para Contato (opcional):</label>
+            <input type="tel" id="contato" name="contato" />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CORREÇÃO: Adicionando a importação do script do modal -->
+    <script type="module" src="./JS/prime.js"></script>
+    <script type="module" src="./JS/auth.js"></script>
+
+    <!-- Script do Menu Hambúrguer -->
+    <script>
+      const menuBtn = document.getElementById("mobile-menu");
+      const navLinks = document.querySelector(".nav-links");
+
+      menuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("mobile-open");
+      });
+    </script>
+  </body>
+</html>

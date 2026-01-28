@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AUTO TEST</title>
+  </head>
+  <body>
+    <h1>Testando automaticamente...</h1>
+    <pre id="result">Aguardando...</pre>
+
+    <script>
+      async function autotest() {
+        console.log("🚀 Iniciando teste automático...");
+
+        // Test 1: Health
+        console.log("✅ Test 1: Health");
+        let resp = await fetch("/api/health");
+        let data = await resp.json();
+        console.log("Resposta:", data);
+
+        // Test 2: Route calculation
+        console.log("🚗 Test 2: Calcular rota");
+        resp = await fetch("/api/calculate-routes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            origin: "São Paulo, Brasil",
+            destination: "Buenos Aires, Argentina",
+          }),
+        });
+        data = await resp.json();
+        console.log(`Resposta: ${data.routes?.length || 0} rotas`);
+        document.getElementById("result").innerHTML = JSON.stringify(
+          data,
+          null,
+          2
+        ).substring(0, 2000);
+      }
+
+      autotest().catch((err) => {
+        console.error("Erro:", err);
+        document.getElementById("result").innerHTML = "Erro: " + err.message;
+      });
+    </script>
+  </body>
+</html>

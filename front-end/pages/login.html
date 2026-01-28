@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acesso Cliente | ClienteRouter</title>
+    <!-- Usa o estilo Dark Mode. Nota: O seu caminho é ./FRONT-END/CSS/routers.css (relativo, funciona em file:// e http://) -->
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="../img/favicon-96x96.png"
+    />
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg" />
+    <link rel="shortcut icon" href="../img/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../img/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link rel="mask-icon" href="../img/safari-pinned-tab.svg" color="#5bbad5" />
+    <link rel="stylesheet" href="../CSS/login.css" />
+
+    <link rel="stylesheet" href="../CSS/routers.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- Importa as bibliotecas Firebase SDK v9 (Compatível com verificação de claims) -->
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"
+    ></script>
+    <!-- Adiciona o SweetAlert para mensagens mais amigáveis -->
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style></style>
+  </head>
+  <body>
+    <main class="auth-main">
+      <div class="glass-blob blob-1"></div>
+      <div class="glass-blob blob-2"></div>
+
+      <div class="auth-container">
+        <section class="glass-card">
+          <header class="glass-header">
+            <div class="logo-area">🚚</div>
+            <h1>Road<span>Truck</span></h1>
+            <p>Acesso exclusivo ao painel de logística</p>
+          </header>
+
+          <div class="toggle-container">
+            <input type="checkbox" id="signup_toggle" style="display: none" />
+            <label for="signup_toggle" class="glass-toggle">
+              <span class="toggle-slider"></span>
+              <span class="label-login">Login</span>
+              <span class="label-signup">Cadastro</span>
+            </label>
+          </div>
+
+          <div id="forms-container">
+            <div class="card-content" id="login-card">
+              <form id="loginForm">
+                <div class="input-glass-group">
+                  <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+                <div class="input-glass-group">
+                  <input
+                    type="password"
+                    id="loginSenha"
+                    placeholder="Senha"
+                    required
+                  />
+                </div>
+                <button type="submit" id="login-btn" class="btn-glass-primary">
+                  Entrar no Painel
+                </button>
+
+                <div class="auth-divider">
+                  <span>ou continue com</span>
+                </div>
+                <button
+                  type="button"
+                  id="google-login-btn"
+                  class="btn-glass-google"
+                >
+                  <i class="fab fa-google"></i> Google
+                </button>
+              </form>
+            </div>
+
+            <div class="card-content" id="register-card" style="display: none">
+              <form id="registerForm">
+                <input
+                  type="text"
+                  id="registerName"
+                  placeholder="Nome Completo"
+                  required
+                />
+                <input
+                  type="email"
+                  id="registerEmail"
+                  placeholder="Email corporativo"
+                  required
+                />
+                <div class="side-by-side">
+                  <input
+                    type="password"
+                    id="registerSenha"
+                    placeholder="Senha"
+                    required
+                    minlength="6"
+                  />
+                  <input
+                    type="password"
+                    id="registerConfirmSenha"
+                    placeholder="Confirmar"
+                    required
+                    minlength="6"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  id="register-btn"
+                  class="btn-glass-success"
+                >
+                  Solicitar Acesso
+                </button>
+
+                <div class="auth-divider">
+                  <span>ou continue com</span>
+                </div>
+                <button
+                  type="button"
+                  id="google-register-btn"
+                  class="btn-glass-google"
+                >
+                  <i class="fab fa-google"></i> Google
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <!-- CORREÇÃO 3: Lógica de alternância (toggle) reinserida -->
+
+    <!-- CORREÇÃO 4: Importação do auth.js movida para fora do main e com type="module" (caminho relativo) -->
+    <script type="module" src="../JS/auth.js"></script>
+    <script type="module" src="../JS/login.js"></script>
+    <script type="module">
+      import { auth, db } from "../JS/config.js";
+      import {
+        GoogleAuthProvider,
+        signInWithPopup,
+      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+      import {
+        doc,
+        getDoc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+      const handleGoogleAuth = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+
+          // Verifica se o usuário já existe no Firestore
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (!userDoc.exists()) {
+            // Se não existe, cria o cadastro como 'pending' (igual ao email)
+            await setDoc(userDocRef, {
+              name: user.displayName,
+              email: user.email,
+              status: "pending",
+              role: "client",
+              createdAt: new Date().toISOString(),
+              photoURL: user.photoURL,
+            });
+
+            // Redireciona para a página de espera
+            window.location.href = "pending.html";
+          } else {
+            // Se já existe, o auth.js cuidará do redirecionamento automaticamente
+          }
+        } catch (error) {
+          console.error("Erro no login Google:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Falha no Login",
+            text: error.message,
+          });
+        }
+      };
+
+      const googleLoginBtn = document.getElementById("google-login-btn");
+      const googleRegisterBtn = document.getElementById("google-register-btn");
+
+      if (googleLoginBtn) {
+        googleLoginBtn.addEventListener("click", handleGoogleAuth);
+      }
+      if (googleRegisterBtn) {
+        googleRegisterBtn.addEventListener("click", handleGoogleAuth);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RoadTruck | Roteirização para Cargas Pesadas</title>
+
+    <meta
+      name="description"
+      content="Navegação inteligente e cálculos de rota para caminhões."
+    />
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg" />
+    <link rel="stylesheet" href="../CSS/routers.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
+        <div class="brand">
+          <div class="logo-icon">🚚</div>
+          <h1>RoadTruck<span>Router</span></h1>
+        </div>
+        <div class="user-controls">
+          <span id="user-email">Bem-vindo(a)</span>
+          <button id="btn-logout" class="btn btn-danger">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="router-main">
+      <div class="sidebar-wrapper" id="mobile-sidebar">
+        <aside class="sidebar" id="config-panel">
+          <section class="form-section">
+            <h2><i class="icon">📍</i> Calcular Rota</h2>
+            <form id="route-form">
+              <div class="form-group">
+                <label for="origem">Origem</label>
+                <input
+                  type="text"
+                  id="origem"
+                  placeholder="Ex: Porto de Santos"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="destino">Destino</label>
+                <input
+                  type="text"
+                  id="destino"
+                  placeholder="Ex: Av. Paulista, 1000"
+                  required
+                />
+              </div>
+
+              <h3>Especificações do Veículo</h3>
+              <div class="vehicle-grid">
+                <div class="form-group">
+                  <label for="altura">Altura (m)</label>
+                  <input type="number" id="altura" value="4.4" step="0.1" />
+                </div>
+                <div class="form-group">
+                  <label for="peso">Peso (ton)</label>
+                  <input type="number" id="peso" value="45" step="0.5" />
+                </div>
+                <div class="form-group">
+                  <label for="comprimento">Comp. (m)</label>
+                  <input
+                    type="number"
+                    id="comprimento"
+                    value="18.6"
+                    step="0.1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="eixos">Eixos</label>
+                  <input type="number" id="eixos" value="6" min="2" />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                id="btn-calcular"
+                class="btn btn-primary w-full"
+              >
+                Traçar Rota Segura
+              </button>
+              <button
+                type="submit"
+                id="btn-minha-localizacao"
+                class="btn btn-secondary w-full mt-2"
+              >
+                Usar Minha Localização
+              </button>
+              <button
+                type="button"
+                id="btn-limpar"
+                class="btn-primary clear-route w-full mt-4"
+              >
+                Limpar Rota
+              </button>
+            </form>
+          </section>
+        </aside>
+
+        <aside class="sidebar" id="info-panel">
+          <section class="info-section">
+            <h2><i class="icon">📊</i> Detalhes</h2>
+            <div id="info" class="info-box">Defina o trajeto...</div>
+          </section>
+
+          <section class="poi-section">
+            <h2><i class="icon">⛽</i> Pontos na Rota</h2>
+            <div class="filter-chips">
+              <span class="chip active">Tudo</span>
+              <span class="chip">Pedágios</span>
+              <span class="chip">Postos</span>
+            </div>
+            <div id="pois-near-route" class="pois-list">
+              Nenhum ponto carregado.
+            </div>
+          </section>
+        </aside>
+      </div>
+      <section class="map-container">
+        <div id="map"></div>
+        <button class="map-fullscreen-btn" id="map-fullscreen-btn">⛶</button>
+      </section>
+    </main>
+
+    <div id="loading-spinner" class="loading-overlay" style="display: none">
+      <div class="spinner"></div>
+      <p>Processando rota para carga pesada...</p>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../lib/polyline-codec.js"></script>
+
+    <script type="module" src="../JS/auth.js"></script>
+    <script type="module" src="../JS/index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Admin | ClienteRouter</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../CSS/admin.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="../img/favicon-96x96.png"
+    />
+    <link rel="icon" type="image/svg+xml" href="../img/favicon.svg" />
+    <link rel="shortcut icon" href="../img/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../img/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link rel="mask-icon" href="../img/safari-pinned-tab.svg" color="#5bbad5" />
+  </head>
+
+  <body class="main-body">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        ClienteRouter
+        <span class="text-xs block text-green-500">ADMIN</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul id="sidebar-menu">
+          <li>
+            <a href="#" class="active" data-target="view-dashboard">
+              <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              data-target="view-pending"
+              class="flex items-center justify-between w-full"
+            >
+              <span class="flex items-center">
+                <div class="relative mr-3">
+                  <i class="fas fa-user-clock"></i>
+                  <span
+                    id="sidebar-pending-badge"
+                    class="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden"
+                  >
+                    0
+                  </span>
+                </div>
+                Clientes Pendentes
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#" data-target="view-active">
+              <i class="fas fa-user-check mr-3"></i> Clientes Ativos
+            </a>
+          </li>
+          <li>
+            <a href="#" data-target="view-blocked">
+              <i class="fas fa-user-slash mr-3"></i> Clientes Bloqueados
+            </a>
+          </li>
+          <li>
+            <a href="#" data-target="view-admins">
+              <i class="fas fa-crown mr-3"></i> Gerenciamento Admins
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              data-target="view-mensagens-clientes"
+              class="flex items-center justify-between w-full"
+            >
+              <span class="flex items-center">
+                <div class="relative mr-3">
+                  <i class="fas fa-comments"></i>
+                  <span
+                    id="sidebar-msg-badge"
+                    class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden"
+                  >
+                    0
+                  </span>
+                </div>
+                Mensagem de clientes
+              </span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="auth-info" class="mb-3">
+          <span
+            id="user-email"
+            class="text-sm text-center block mb-2 overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            Adminstrador@email.com
+          </span>
+          <button id="btn-logout" class="btn btn-danger w-full mt-2">
+            <i class="fas fa-sign-out-alt mr-2"></i> Sair
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content-wrapper p-8" id="dashboard-main">
+      <div
+        id="message-box-dashboard"
+        class="message-box"
+        style="display: none"
+      ></div>
+
+      <section id="view-dashboard" class="content-view">
+        <header class="main-header mb-8">
+          <h2>
+            <i class="fas fa-chart-line mr-2 text-primary-color"></i> Visão
+            Geral Administrativa
+          </h2>
+        </header>
+
+        <section class="metrics-grid">
+          <div class="metric-card">
+            <h3>Clientes Pendentes</h3>
+            <div class="value text-warning-color" id="pending-clients-count">
+              0
+            </div>
+          </div>
+          <div class="metric-card">
+            <h3>Clientes Aprovados</h3>
+            <div class="value text-success-color" id="approved-clients-count">
+              0
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!--seção das mensagems dos clientes-->
+      <section id="view-mensagens-clientes" class="content-view hidden">
+        <header class="main-header mb-8">
+          <h2>
+            <i class="fas fa-comments mr-2 text-primary-color"></i> Central de
+            Suporte
+          </h2>
+        </header>
+
+        <div class="card">
+          <h3
+            class="text-xl font-semibold mb-6 flex justify-between items-center"
+          >
+            Mensagens Recebidas
+            <span
+              id="msg-badge-count"
+              class="bg-primary-color text-bg-dark text-xs px-2 py-1 rounded-full"
+              >0</span
+            >
+          </h3>
+
+          <div id="mensagens-recebidas-list" class="clients-list">
+            <div class="no-clients-message">Carregando mensagens...</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-pending" class="content-view hidden">
+        <div class="card client-approval-section">
+          <h3 class="text-xl font-semibold mb-6">
+            <i class="fas fa-user-clock mr-2"></i> Clientes Pendentes de
+            Aprovação
+          </h3>
+          <div id="clients-list" class="clients-list"></div>
+          <div id="no-clients-message" class="no-clients-message hidden mt-8">
+            <p>🎉 Não há clientes pendentes no momento.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-blocked" class="content-view hidden">
+        <div class="card blocked-clients-section">
+          <h3 class="text-xl font-semibold mb-6">
+            <i class="fas fa-user-slash mr-2"></i> Clientes Bloqueados
+          </h3>
+          <div id="blocked-clients-list" class="clients-list"></div>
+          <div id="no-blocked-clients-message" class="hidden mt-8">
+            <p>Não há clientes bloqueados no momento.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-active" class="content-view hidden">
+        <div class="card approved-clients-section">
+          <h3 class="text-xl font-semibold mb-6">
+            <i class="fas fa-user-check mr-2"></i> Gerenciamento de Clientes
+            Ativos
+          </h3>
+          <div id="approved-clients-list" class="clients-list"></div>
+          <div
+            id="no-approved-clients-message"
+            class="no-approved-clients-message hidden mt-8"
+          >
+            <p>Não há clientes aprovados no momento.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-admins" class="content-view hidden">
+        <div class="card admin-management-section">
+          <h3 class="text-xl font-semibold mb-6">
+            <i class="fas fa-crown mr-2"></i> Promover Novo Administrador
+          </h3>
+          <form id="promote-admin-form" class="flex flex-col md:flex-row gap-4">
+            <input
+              type="email"
+              id="new-admin-email"
+              placeholder="Email do usuário para promover"
+              required
+              class="input-neumo flex-grow"
+            />
+            <button
+              id="promote-admin-btn"
+              type="submit"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-user-plus mr-2"></i> Promover a Admin
+            </button>
+          </form>
+          <p class="text-secondary-color mt-3 text-sm">
+            *Requer Firebase Admin SDK no backend.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="../JS/config.js"></script>
+    <script type="module" src="../JS/admin.js"></script>
+  </body>
+</html>

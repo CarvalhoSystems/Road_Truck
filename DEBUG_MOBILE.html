@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Menu Mobile</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px;
+      }
+
+      .container {
+        max-width: 100%;
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      h1 {
+        margin-bottom: 15px;
+        color: #4ade80;
+      }
+
+      .info-box {
+        background: rgba(15, 23, 42, 0.8);
+        border-left: 4px solid #4ade80;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-family: monospace;
+      }
+
+      .label {
+        color: #94a3b8;
+        margin-bottom: 3px;
+      }
+
+      .value {
+        color: #4ade80;
+        font-weight: bold;
+      }
+
+      .error {
+        color: #f87171;
+      }
+
+      .success {
+        color: #4ade80;
+      }
+
+      .warning {
+        color: #fbbf24;
+      }
+
+      .button {
+        background: #38bdf8;
+        color: #0f172a;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        font-weight: bold;
+        transition: all 0.3s;
+      }
+
+      .button:hover {
+        background: #0284c7;
+      }
+
+      .button:active {
+        transform: scale(0.95);
+      }
+
+      .test-area {
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+      }
+
+      .log-box {
+        background: #000;
+        color: #4ade80;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 0.8rem;
+      }
+
+      .log-entry {
+        padding: 3px 0;
+        border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 Debug Menu Mobile</h1>
+
+      <div class="info-box">
+        <div class="label">📱 Tamanho da Tela:</div>
+        <div class="value" id="screenSize">-</div>
+      </div>
+
+      <div class="info-box">
+        <div class="label">🌐 User Agent:</div>
+        <div class="value" id="userAgent">-</div>
+      </div>
+
+      <div class="info-box">
+        <div class="label">✅ Elementos Encontrados:</div>
+        <div id="elements"></div>
+      </div>
+
+      <div class="info-box">
+        <div class="label">📊 Estilos Computados:</div>
+        <div id="styles"></div>
+      </div>
+
+      <div class="test-area">
+        <h3>🧪 Testes</h3>
+        <button class="button" onclick="testViewport()">Testar Viewport</button>
+        <button class="button" onclick="testElements()">
+          Testar Elementos
+        </button>
+        <button class="button" onclick="testStyles()">Testar Estilos</button>
+        <button class="button" onclick="testTouchEvent()">Testar Touch</button>
+        <button class="button" onclick="simulateMenuClick()">
+          Simular Clique Menu
+        </button>
+        <button class="button" onclick="clearLogs()">Limpar Logs</button>
+
+        <div class="log-box" id="logBox">
+          <div class="log-entry">
+            <span class="success">✅</span> Console de Debug Iniciado
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const LOG_BOX = document.getElementById("logBox");
+      const MAX_LOGS = 50;
+
+      function log(message, type = "info") {
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+
+        let icon = "📝";
+        if (type === "success") icon = "✅";
+        else if (type === "error") icon = "❌";
+        else if (type === "warning") icon = "⚠️";
+
+        entry.innerHTML = `<span class="${type}">${icon} ${message}</span>`;
+        LOG_BOX.appendChild(entry);
+
+        // Manter apenas MAX_LOGS
+        while (LOG_BOX.children.length > MAX_LOGS) {
+          LOG_BOX.removeChild(LOG_BOX.firstChild);
+        }
+
+        LOG_BOX.scrollTop = LOG_BOX.scrollHeight;
+        console.log(message);
+      }
+
+      function clearLogs() {
+        LOG_BOX.innerHTML =
+          '<div class="log-entry"><span class="success">✅</span> Logs Limpos</div>';
+      }
+
+      function testViewport() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const isMobile = width <= 768;
+
+        document.getElementById("screenSize").innerHTML =
+          `${width}x${height} - ${isMobile ? '<span class="success">MOBILE</span>' : '<span class="warning">DESKTOP</span>'}`;
+
+        log(`Viewport: ${width}x${height}`, "info");
+        log(
+          `Modo: ${isMobile ? "MOBILE ✅" : "DESKTOP"}`,
+          isMobile ? "success" : "warning",
+        );
+      }
+
+      function testElements() {
+        const elements = {
+          "menu-toggle": document.getElementById("menu-toggle"),
+          "config-panel": document.getElementById("config-panel"),
+          "info-panel": document.getElementById("info-panel"),
+          "menu-backdrop": document.getElementById("menu-backdrop"),
+          "map-container": document.querySelector(".map-container"),
+          "btn-calcular": document.getElementById("btn-calcular"),
+          origem: document.getElementById("origem"),
+          destino: document.getElementById("destino"),
+        };
+
+        let html = "";
+        for (let [name, element] of Object.entries(elements)) {
+          const found = element ? "✅" : "❌";
+          html += `<div class="value">${found} ${name}</div>`;
+          log(
+            `${found} ${name}: ${element ? "Encontrado" : "NÃO ENCONTRADO"}`,
+            element ? "success" : "error",
+          );
+        }
+        document.getElementById("elements").innerHTML = html;
+      }
+
+      function testStyles() {
+        const configPanel = document.getElementById("config-panel");
+        if (!configPanel) {
+          log("config-panel não encontrado!", "error");
+          return;
+        }
+
+        const styles = getComputedStyle(configPanel);
+        let html = "";
+        html += `<div><strong>Position:</strong> ${styles.position}</div>`;
+        html += `<div><strong>Left:</strong> ${styles.left}</div>`;
+        html += `<div><strong>Display:</strong> ${styles.display}</div>`;
+        html += `<div><strong>Z-Index:</strong> ${styles.zIndex}</div>`;
+        html += `<div><strong>Background:</strong> ${styles.background}</div>`;
+
+        document.getElementById("styles").innerHTML = html;
+        log("Estilos analisados", "success");
+      }
+
+      function testTouchEvent() {
+        log(
+          "Sistema de toque:",
+          navigator.maxTouchPoints > 0 ? "SUPORTADO ✅" : "NÃO SUPORTADO ❌",
+          navigator.maxTouchPoints > 0 ? "success" : "warning",
+        );
+        log(`Touch Points: ${navigator.maxTouchPoints}`, "info");
+      }
+
+      function simulateMenuClick() {
+        const menuToggle = document.getElementById("menu-toggle");
+        if (!menuToggle) {
+          log("Botão hambúrguer não encontrado!", "error");
+          return;
+        }
+
+        log("Simulando clique no menu...", "info");
+        menuToggle.click();
+
+        setTimeout(() => {
+          const configPanel = document.getElementById("config-panel");
+          if (configPanel && configPanel.classList.contains("active")) {
+            log("✅ Menu ABERTO com sucesso!", "success");
+          } else {
+            log("❌ Menu NÃO abriu após clique", "error");
+          }
+        }, 100);
+      }
+
+      // Inicializar testes
+      window.addEventListener("load", () => {
+        log("Página carregada", "success");
+        testViewport();
+        testElements();
+        testStyles();
+        testTouchEvent();
+      });
+
+      // Monitorar redimensionamento
+      window.addEventListener("resize", () => {
+        testViewport();
+      });
+
+      // Log de cliques
+      document.addEventListener("click", (e) => {
+        if (e.target.id === "menu-toggle") {
+          log("Clique no hambúrguer detectado!", "success");
+        }
+      });
+    </script>
+  </body>
+</html>

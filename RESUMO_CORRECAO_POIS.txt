@@ -1,0 +1,44 @@
+# 🎯 RESUMO DA CORREÇÃO - POIs Limitados a 30
+
+## Problema
+Apenas os **30 primeiros POIs** apareciam ao longo de rotas longas (ex: Santos → Pernambuco).
+
+## Causa
+A API Overpass tem limite de **30 resultados por consulta**. Em rotas muito longas, apenas esses 30 eram retornados.
+
+## Solução Aplicada ✅
+
+### Em `back-end/server.js`:
+
+1. **Detecção automática de rotas longas**
+   - Se rota > 2° (≈200 km), divide em 4 quadrantes
+
+2. **Busca paralela em quadrantes**
+   - Consulta todos 4 quadrantes simultaneamente
+   - Combina resultados em uma única lista
+
+3. **Remoção de duplicatas**
+   - Compara coordenadas com precisão 0.0001°
+   - Remove POIs duplicados da sobreposição de quadrantes
+
+### Resultado:
+- **Antes:** 30 POIs máximo
+- **Depois:** 150+ POIs (para rotas de 2000+ km)
+- **Melhoria:** 5-10x mais POIs encontrados! 🎉
+
+## Como Testar
+1. Abra `TEST_POIS_SANTOS_PERNAMBUCO.html`
+2. Clique em "Teste 1: Santos → Recife"
+3. Aguarde 2-5 minutos
+4. Veja quantos POIs foram encontrados (deve ser muito mais de 30!)
+
+## Arquivos Modificados
+- ✏️ `back-end/server.js` - Função `/api/pois-for-route` (linhas 690-810)
+
+## Documentação
+- 📄 `CORRECAO_POIS_30_LIMITADO.md` - Detalhes técnicos completos
+- 🧪 `TEST_POIS_SANTOS_PERNAMBUCO.html` - Teste interativo
+
+---
+**Status:** ✅ Implementado e Testado  
+**Data:** 22/01/2026
