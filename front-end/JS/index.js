@@ -7,9 +7,8 @@ let temporaryPoiLayer;
 
 // ✅ CONFIGURAÇÃO DA URL DO BACKEND (Produção vs Desenvolvimento)
 const BACKEND_URL = (() => {
-  // 🌐 PRODUÇÃO: URL fixa para motoristas em qualquer lugar do Brasil
-  // Use variáveis de ambiente ou mude manualmente:
-  const BACKEND_PRODUCAO = "https://SEU-APP-NO-RENDER.onrender.com/api"; // 🟢 Cole aqui o link que o Render/Railway te deu
+  // 🌐 PRODUÇÃO: URL do servidor Render
+  const BACKEND_PRODUCAO = "https://road-truck-api.onrender.com/api";
 
   // 🏠 DESENVOLVIMENTO: Localhost para testes locais
   const isProducao =
@@ -17,21 +16,56 @@ const BACKEND_URL = (() => {
     window.location.hostname.includes("firebase");
 
   if (isProducao) {
-    // Em produção, usa URL fixa (FUNCIONA EM QUALQUER LUGAR DO BRASIL COM DADOS MÓVEIS)
     return BACKEND_PRODUCAO;
   } else if (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
   ) {
-    // Desktop local
     return "http://localhost:8080/api";
   } else {
-    // Mobile na mesma rede WiFi local (uso temporário durante testes)
     const protocol = window.location.protocol;
     const hostname = window.location.hostname;
     return `${protocol}//${hostname}:8080/api`;
   }
 })();
+
+// ✅ FUNÇÃO PARA REQUISIÇÕES COM RETENTIVA (Resolve problema Render dormindo)
+async function axiosWithRetry(config, maxRetries = 4, initialDelay = 2000) {
+  let lastError;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`🔄 Tentativa ${attempt} de ${maxRetries}...`);
+        const delay = initialDelay * Math.pow(2, attempt - 1);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+
+      return await axios({
+        ...config,
+        timeout: attempt === 0 ? 120000 : 90000, // 2min na primeira, 1min nas outras
+        headers: {
+          ...config.headers,
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
+    } catch (error) {
+      lastError = error;
+      console.warn(`⚠️ Tentativa ${attempt + 1} falhou:`, error.message);
+
+      // Não tenta novamente se for erro 4xx (exceto 429 Too Many Requests)
+      if (
+        error.response &&
+        error.response.status < 500 &&
+        error.response.status !== 429
+      ) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError;
+}
 
 console.log("🔌 Informações de Conexão:");
 console.log(`   Frontend URL: ${window.location.href}`);
@@ -301,24 +335,24 @@ async function calcularRota() {
       vehicleInfo,
     });
 
-    const response = await axios.post(
-      `${BACKEND_URL}/calculate-route`,
-      {
+    infoDisp.innerHTML =
+      "🔄 Conectando ao servidor... Aguarde enquanto acordamos o servidor Render.";
+
+    const response = await axiosWithRetry({
+      method: "POST",
+      url: `${BACKEND_URL}/calculate-route`,
+      data: {
         origem,
         destino,
         vehicleInfo,
         calculate_alternatives: true,
       },
-      {
-        timeout: 180000, // Aumenta timeout para 3 minutos (melhor para mobile)
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
-          Accept: "application/json",
-        },
-        withCredentials: false, // Desativa para evitar problemas CORS em mobile
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-    );
+      withCredentials: false,
+    });
 
     if (!response || !response.data) {
       throw new Error("Resposta inválida do servidor.");
@@ -626,19 +660,16 @@ async function buscarEDesenharPOIs(
           );
         }
 
-        const resp = await axios.post(
-          `${BACKEND_URL}/pois-for-route`,
-          { polyline: payloadPolyline, radius: 50 }, // Aumenta raio de busca para 50km
-          {
-            timeout: 300000, // Aumenta timeout para 5 minutos em rotas longas
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-              "Content-Type": "application/json",
-              "User-Agent": navigator.userAgent,
-            },
-            withCredentials: false,
+        const resp = await axiosWithRetry({
+          method: "POST",
+          url: `${BACKEND_URL}/pois-for-route`,
+          data: { polyline: payloadPolyline, radius: 50 },
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": navigator.userAgent,
           },
-        );
+          withCredentials: false,
+        });
 
         console.log("✅ Resposta do servidor /pois-for-route:", resp.data);
         allPois = resp.data.pois || [];
